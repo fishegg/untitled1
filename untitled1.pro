@@ -39,5 +39,6 @@ CONFIG += sailfishapp_i18n
 TRANSLATIONS += translations/untitled1-de.ts
 
 DISTFILES += \
-    qml/TestModel.qml
+    qml/TestModel.qml \
+    qml/pages/StationsListPage.qml
 

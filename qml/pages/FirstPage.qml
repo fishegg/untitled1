@@ -62,25 +62,17 @@ Page {
             }
 
             Row {
-                ComboBox {
+                ValueButton {
                     width: column.width / 2
-                    label: qsTr("from")
-                    menu: ContextMenu {
-                        MenuItem { text: "automatic" }
-                        MenuItem { text: "manual" }
-                        MenuItem { text: "Long Long Long Long selection" }
-                        MenuItem { text: "321 京溪南方医院" }
-                    }
+                    label: "起点"
+                    value: "选择"
+                    onClicked: pageStack.push(Qt.resolvedUrl("StationsListPage.qml"))
                 }
-
-                ComboBox {
+                ValueButton {
                     width: column.width / 2
-                    label: qsTr("to")
-                    menu: ContextMenu {
-                        MenuItem { text: "automatic" }
-                        MenuItem { text: "manual" }
-                        MenuItem { text: "Long Long Long Long selection" }
-                    }
+                    label: "终点"
+                    value: "选择"
+                    onClicked: pageStack.push(Qt.resolvedUrl("StationsListPage.qml"))
                 }
             }
         }
