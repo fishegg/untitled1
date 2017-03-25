@@ -11,7 +11,7 @@ DatabaseConnector::DatabaseConnector(QObject *parent)
 bool DatabaseConnector::openconnection()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("../testdata/test.sqlite");
+    db.setDatabaseName("/home/nemo/testdata/test.sqlite");
     if(db.open())
     {
         qDebug() << "connection opened" << endl;

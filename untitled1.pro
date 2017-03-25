@@ -49,3 +49,8 @@ DISTFILES += \
 HEADERS += \
     src/databaseconnector.h
 
+#database
+db.path = /home/nemo/testdata
+db.files += $$PWD/testdata/test.sqlite
+INSTALLS += db
+
