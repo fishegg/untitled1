@@ -10,11 +10,14 @@
 #   - translation filenames have to be changed
 
 # The name of your application
+QT += sql
+
 TARGET = untitled1
 
 CONFIG += sailfishapp
 
-SOURCES += src/untitled1.cpp
+SOURCES += src/untitled1.cpp \
+    src/databaseconnector.cpp
 
 OTHER_FILES += qml/untitled1.qml \
     qml/cover/CoverPage.qml \
@@ -40,5 +43,9 @@ TRANSLATIONS += translations/untitled1-de.ts
 
 DISTFILES += \
     qml/TestModel.qml \
-    qml/pages/StationsListPage.qml
+    qml/pages/StationsListPage.qml \
+    testdata/test.sqlite
+
+HEADERS += \
+    src/databaseconnector.h
 

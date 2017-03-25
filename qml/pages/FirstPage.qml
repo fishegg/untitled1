@@ -30,6 +30,8 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import untitled1.dbc 1.0
+import ".."
 
 
 Page {
@@ -56,12 +58,14 @@ Page {
             id: column
 
             width: page.width
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingMedium
             PageHeader {
-                title: qsTr("")
+                id: header
+                title: qsTr("Show Page 2")
             }
 
             Row {
+                id: row
                 ValueButton {
                     width: column.width / 2
                     label: "起点"
@@ -75,8 +79,36 @@ Page {
                     onClicked: pageStack.push(Qt.resolvedUrl("StationsListPage.qml"))
                 }
             }
+
+            SilicaListView {
+                id: listview
+                width: parent.width
+                height: page.height - header.height - row.height - column.spacing*2
+                clip: true
+
+                model: TestModel {
+                }
+
+                section.property: "line"
+                section.delegate: SectionHeader {
+                    text: section
+                }
+
+                delegate: BackgroundItem {
+                    Label {
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        text: station_number + " " + station
+                    }
+                    onClicked: console.log("click")
+                }
+            }
         }
     }
+
+    DatabaseConnector{}
 }
 
 

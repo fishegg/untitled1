@@ -6,6 +6,10 @@ Page {
     id: listpage
     property string searchString
 
+    TestModel {
+        id: originalmodel
+    }
+
     SilicaListView {
         id: listview
         anchors.fill: parent
@@ -14,11 +18,13 @@ Page {
 
             function update() {
                 clear()
-                for (var i=0; i<testmodel.count; i++) {
-                    if (searchField.text == "" || testmodel.get(i).station_number.indexOf(searchField.text) >= 0) {
-                        append({"line": testmodel.get(i).line,
-                               "station_number": testmodel.get(i).station_number,
-                               "station": testmodel.get(i).station})
+                for (var i=0; i<originalmodel.count; i++) {
+                    if (listview.headerItem.text == "" ||
+                            originalmodel.get(i).station_number.indexOf(listview.headerItem.text) >= 0 ||
+                            originalmodel.get(i).station.indexOf(listview.headerItem.text) >= 0) {
+                        append({"line": originalmodel.get(i).line,
+                               "station_number": originalmodel.get(i).station_number,
+                               "station": originalmodel.get(i).station})
                     }
                 }
             }
