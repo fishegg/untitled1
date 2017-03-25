@@ -2,10 +2,12 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <qdebug.h>
+#include <QStringList>
 
 DatabaseConnector::DatabaseConnector(QObject *parent)
 {
     openconnection();
+    getdata();
 }
 
 bool DatabaseConnector::openconnection()
@@ -22,5 +24,20 @@ bool DatabaseConnector::openconnection()
         qDebug() << "connection open failed" << endl;
         return false;
     }
+}
+
+void DatabaseConnector::getdata()
+{
+    QSqlQuery query("SELECT station_name FROM test");
+    while(query.next())
+    {
+        names_list << query.value("station_name").toString();
+        qDebug() << query.value("station_name").toString();
+    }
+}
+
+QStringList DatabaseConnector::getlist()
+{
+    return names_list;
 }
 

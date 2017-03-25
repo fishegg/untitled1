@@ -86,8 +86,7 @@ Page {
                 height: page.height - header.height - row.height - column.spacing*2
                 clip: true
 
-                model: TestModel {
-                }
+                model: db.getlist()
 
                 section.property: "line"
                 section.delegate: SectionHeader {
@@ -100,7 +99,7 @@ Page {
                             verticalCenter: parent.verticalCenter
                             horizontalCenter: parent.horizontalCenter
                         }
-                        text: station_number + " " + station
+                        text: modelData
                     }
                     onClicked: console.log("click")
                 }
@@ -108,7 +107,9 @@ Page {
         }
     }
 
-    DatabaseConnector{}
+    DatabaseConnector {
+        id: db
+    }
 }
 
 
