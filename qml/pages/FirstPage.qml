@@ -70,13 +70,25 @@ Page {
                     width: column.width / 2
                     label: "起点"
                     value: "选择"
-                    onClicked: pageStack.push(Qt.resolvedUrl("StationsListPage.qml"))
+                    onClicked: openlistdialog()
+                    function openlistdialog() {
+                        var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
+                        dialog.accepted.connect(function() {
+                            value = dialog.selected_station
+                        })
+                    }
                 }
                 ValueButton {
                     width: column.width / 2
                     label: "终点"
                     value: "选择"
-                    onClicked: pageStack.push(Qt.resolvedUrl("StationsListPage.qml"))
+                    onClicked: openlistdialog()
+                    function openlistdialog() {
+                        var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
+                        dialog.accepted.connect(function() {
+                            value = dialog.selected_station
+                        })
+                    }
                 }
             }
 

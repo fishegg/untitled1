@@ -17,6 +17,8 @@ public:
     bool openconnection();
     void getdata();
     Q_INVOKABLE QStringList getlist();
+    Q_INVOKABLE int getlistsize();
+    Q_INVOKABLE QString getlistelement(int i);
 
 signals:
 

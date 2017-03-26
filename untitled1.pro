@@ -43,8 +43,8 @@ TRANSLATIONS += translations/untitled1-de.ts
 
 DISTFILES += \
     qml/TestModel.qml \
-    qml/pages/StationsListPage.qml \
-    testdata/test.sqlite
+    testdata/test.sqlite \
+    qml/pages/StationsListDialog.qml
 
 HEADERS += \
     src/databaseconnector.h

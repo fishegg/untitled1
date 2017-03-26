@@ -28,16 +28,32 @@ bool DatabaseConnector::openconnection()
 
 void DatabaseConnector::getdata()
 {
-    QSqlQuery query("SELECT station_name FROM test");
+    QString full_string;
+    QSqlQuery query("SELECT station_no_,station_name FROM test");
     while(query.next())
     {
-        names_list << query.value("station_name").toString();
-        qDebug() << query.value("station_name").toString();
+        full_string = query.value("station_name").toString();
+        if(full_string != "无")
+        {
+            full_string = query.value("station_no_").toString() + " " + full_string;
+            names_list << full_string;
+        }
+        qDebug() << query.value("station_no_").toString() + query.value("station_name").toString();
     }
 }
 
 QStringList DatabaseConnector::getlist()
 {
     return names_list;
+}
+
+int DatabaseConnector::getlistsize()
+{
+    return names_list.size();
+}
+
+QString DatabaseConnector::getlistelement(int i)
+{
+    return names_list.at(i);
 }
 
