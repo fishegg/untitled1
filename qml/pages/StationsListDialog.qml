@@ -8,6 +8,7 @@ Dialog {
     id: listdialog
     property string searchString
     property int selected_index
+    property int selected_number
     property string selected_station
 
     Component.onCompleted: {
@@ -36,9 +37,14 @@ Dialog {
                 clear()
                 for (var i=0; i<stationmodel.rowCount(); i++) {
                     if (listview.headerItem.text == "" ||
-                            stationmodel.data(i,263).indexOf(listview.headerItem.text) >= 0) {
-                        console.log(stationmodel.data(i,263))
-                        append({"station_name": stationmodel.data(i,263)})
+                            stationmodel.singledata(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||
+                            stationmodel.singledata(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0// ||
+                            /*stationmodel.singledata(i,StationModel.LineRole).indexOf(listview.headerItem.text >= 0)*/) {
+                        //console.log(stationmodel.singledata(i,StationModel.station_name))
+                        append({"number": stationmodel.singledata(i,StationModel.NumRole),
+                                   "station_name": stationmodel.singledata(i,StationModel.StnNameRole),
+                                   "station_number": stationmodel.singledata(i,StationModel.StnNumRole),
+                                   "line_name": stationmodel.singledata(i,StationModel.LineRole)})
                     }
                 }
             }
@@ -46,14 +52,14 @@ Dialog {
 
         header: SearchField {
             id: searchField
-            width: parent.width
+            width: parent.width - Theme.paddingLarge
             onTextChanged: listmodel.update()
         }
 
-        /*section.property: "line"
+        section.property: "line_name"
         section.delegate: SectionHeader {
             text: section
-        }*/
+        }
 
         delegate: BackgroundItem {
             Label {
@@ -62,18 +68,20 @@ Dialog {
                     verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: station_name
+                text: station_number + " " + station_name
             }
             onClicked: {
                 console.log("click" + index)
                 selected_index = index
+                selected_number = number
+                selected_station = station_name
                 listdialog.accept()
             }
         }
     }
 
     onAccepted: {
-        selected_station = listmodel.get(selected_index).no_name_string
+        //selected_station = listmodel.get(selected_index).no_name_string
         console.log("selected" + selected_station)
     }
 }

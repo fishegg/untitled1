@@ -71,26 +71,32 @@ Page {
             Row {
                 id: row
                 ValueButton {
+                    id: sourcebutton
                     width: column.width / 2
                     label: "起点"
                     value: "选择"
                     onClicked: openlistdialog()
+                    property int source
                     function openlistdialog() {
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
                             value = dialog.selected_station
+                            source = dialog.selected_number
                         })
                     }
                 }
                 ValueButton {
+                    id: destinationbutton
                     width: column.width / 2
                     label: "终点"
                     value: "选择"
                     onClicked: openlistdialog()
+                    property int destination
                     function openlistdialog() {
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
                             value = dialog.selected_station
+                            destination = dialog.selected_number
                         })
                     }
                 }

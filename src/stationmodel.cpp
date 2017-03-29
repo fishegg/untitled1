@@ -1,4 +1,3 @@
-#include <QString>
 #include <qdebug.h>
 #include "stationmodel.h"
 #include "station.h"
@@ -42,6 +41,7 @@ void StationModel::getdata()
     {
         qDebug() << "connection open failed" << endl;
     }
+    db.close();
 }
 
 void StationModel::addstation(const Station &station)
@@ -59,15 +59,20 @@ int StationModel::rowCount(const QModelIndex &parent) const
 
 QVariant StationModel::data(const QModelIndex &index, int role) const
 {
-    qDebug() << "index.row" << index.row() << endl;
+    //qDebug() << "index.row" << index.row() << endl;
     if(index.row() < 0 || index.row() > stationlist.count())
     {
         return QVariant();
     }
-    //qDebug() << "role" << role << endl;
+    //qDebug() << "data() role" << role << endl;
+    //qDebug() << "data() index.row() = " << index.row() << " index.column() = " << index.column() << endl;
 
     const Station &station = stationlist[index.row()];
-    if(role == CountRole)
+    if(role == NumRole)
+    {
+        return station.number();
+    }
+    else if(role == CountRole)
     {
         return station.linescount();
     }
@@ -103,6 +108,22 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+QVariant StationModel::singledata(const int &row, int role) const
+{
+    if(row < 0 || row > stationlist.count())
+    {
+        //qDebug() << "sigledata get failed" << endl;
+        return QVariant();
+    }
+    QModelIndex index = createIndex(row,0);
+    //qDebug() << "singledata() role" << role << endl;
+    //qDebug() << "singledata() index.row() = " << index.row() << " index.column() = " << index.column() << endl;
+    //QVariant d = data(index,role);
+    //qDebug() << "single data d = " << d.toString() << endl;
+    //return d;
+    return data(index,role);
+}
+
 QHash<int, QByteArray> StationModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
@@ -116,4 +137,9 @@ QHash<int, QByteArray> StationModel::roleNames() const
     roles[LineRole] = "line_name";
     roles[InterchangeRole] = "is_interchange";
     return roles;
+}
+
+void StationModel::search(int source, int destination)
+{
+    RouteSearch routesearch
 }

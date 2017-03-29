@@ -20,7 +20,9 @@ SOURCES += src/untitled1.cpp \
     src/databaseconnector.cpp \
     src/station.cpp \
     src/stationmodel.cpp \
-    src/databasequery.cpp
+    src/databasequery.cpp \
+    src/routesearch.cpp \
+    src/graphm.cpp
 
 OTHER_FILES += qml/untitled1.qml \
     qml/cover/CoverPage.qml \
@@ -53,7 +55,9 @@ HEADERS += \
     src/databaseconnector.h \
     src/station.h \
     src/stationmodel.h \
-    src/databasequery.h
+    src/databasequery.h \
+    src/routesearch.h \
+    src/graphm.h
 
 #database
 db.path = /home/nemo/testdata
