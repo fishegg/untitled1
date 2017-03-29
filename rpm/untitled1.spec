@@ -51,7 +51,8 @@ Short description of my Sailfish OS Application
 %install
 rm -rf %{buildroot}
 # >> install pre
-# << install pre
+#mkdir -p %{buildroot}/home/nemo/testdata
+#cp -r testdata/* %{buildroot}/home/nemo/testdata
 %qmake5_install
 
 # >> install post

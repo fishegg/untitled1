@@ -31,11 +31,16 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import untitled1.dbc 1.0
+import untitled1.stationmodel 1.0
 import ".."
 
 
 Page {
     id: page
+
+    Component.onCompleted: {
+        console.log("count"+stationmodel.rowCount())
+    }
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
@@ -56,7 +61,6 @@ Page {
         // of the page, followed by our content.
         Column {
             id: column
-
             width: page.width
             spacing: Theme.paddingMedium
             PageHeader {
@@ -98,9 +102,9 @@ Page {
                 height: page.height - header.height - row.height - column.spacing*2
                 clip: true
 
-                model: db.getlist()
+                model: stationmodel
 
-                section.property: "line"
+                section.property: "line_name"
                 section.delegate: SectionHeader {
                     text: section
                 }
@@ -111,16 +115,12 @@ Page {
                             verticalCenter: parent.verticalCenter
                             horizontalCenter: parent.horizontalCenter
                         }
-                        text: modelData
+                        text: station_number + " " + station_name
                     }
                     onClicked: console.log("click")
                 }
             }
         }
-    }
-
-    DatabaseConnector {
-        id: db
     }
 }
 

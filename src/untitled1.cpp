@@ -37,6 +37,7 @@
 #include <QGuiApplication>
 #include <QQuickView>
 #include "databaseconnector.h"
+#include "stationmodel.h"
 
 
 int main(int argc, char *argv[])
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc,argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
     qmlRegisterType<DatabaseConnector>("untitled1.dbc",1,0,"DatabaseConnector");
+    qmlRegisterType<StationModel>("untitled1.stationmodel",1,0,"StationModel");
 
     QObject::connect(view->engine(),SIGNAL(quit()),qApp,SLOT(quit()));
 

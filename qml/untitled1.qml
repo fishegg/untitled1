@@ -30,6 +30,8 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import untitled1.dbc 1.0
+import untitled1.stationmodel 1.0
 import "pages"
 
 ApplicationWindow
@@ -38,6 +40,9 @@ ApplicationWindow
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     allowedOrientations: Orientation.All
     _defaultPageOrientations: Orientation.All
+    StationModel {
+        id: stationmodel
+    }
 }
 
 

@@ -17,7 +17,10 @@ TARGET = untitled1
 CONFIG += sailfishapp
 
 SOURCES += src/untitled1.cpp \
-    src/databaseconnector.cpp
+    src/databaseconnector.cpp \
+    src/station.cpp \
+    src/stationmodel.cpp \
+    src/databasequery.cpp
 
 OTHER_FILES += qml/untitled1.qml \
     qml/cover/CoverPage.qml \
@@ -47,7 +50,10 @@ DISTFILES += \
     qml/pages/StationsListDialog.qml
 
 HEADERS += \
-    src/databaseconnector.h
+    src/databaseconnector.h \
+    src/station.h \
+    src/stationmodel.h \
+    src/databasequery.h
 
 #database
 db.path = /home/nemo/testdata

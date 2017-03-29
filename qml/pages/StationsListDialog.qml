@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import untitled1.dbc 1.0
+import untitled1.stationmodel 1.0
 import ".."
 
 Dialog {
@@ -10,11 +11,11 @@ Dialog {
     property string selected_station
 
     Component.onCompleted: {
-        originalmodel.init()
+        //originalmodel.init()
         listmodel.update()
     }
 
-    ListModel {
+    /*ListModel {
         id: originalmodel
         function init() {
             clear();
@@ -22,7 +23,7 @@ Dialog {
                 append({"no_name_string": db.getlistelement(i).toString()});
             }
         }
-    }
+    }*/
 
     SilicaListView {
         id: listview
@@ -31,12 +32,13 @@ Dialog {
             id: listmodel
 
             function update() {
+                console.log("count"+stationmodel.rowCount())
                 clear()
-                for (var i=0; i<originalmodel.count; i++) {
+                for (var i=0; i<stationmodel.rowCount(); i++) {
                     if (listview.headerItem.text == "" ||
-                            originalmodel.get(i).no_name_string.indexOf(listview.headerItem.text) >= 0) {
-                        console.log(originalmodel.get(i).no_name_string)
-                        append({"no_name_string": originalmodel.get(i).no_name_string})
+                            stationmodel.data(i,263).indexOf(listview.headerItem.text) >= 0) {
+                        console.log(stationmodel.data(i,263))
+                        append({"station_name": stationmodel.data(i,263)})
                     }
                 }
             }
@@ -60,7 +62,7 @@ Dialog {
                     verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: no_name_string
+                text: station_name
             }
             onClicked: {
                 console.log("click" + index)
@@ -68,10 +70,6 @@ Dialog {
                 listdialog.accept()
             }
         }
-    }
-
-    DatabaseConnector {
-        id: db
     }
 
     onAccepted: {
