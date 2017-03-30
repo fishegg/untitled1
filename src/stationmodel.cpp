@@ -11,11 +11,13 @@ void StationModel::getdata()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("/home/nemo/testdata/test.sqlite");
+    int station_count = 0, i, j;
     if(db.open())
     {
         qDebug() << "connection opened" << endl;
         int number, lines_count, same_station[3];
         QString station_name, station_number, line_name;
+        QString serial_distance;
         bool interchange;
         QSqlQuery query("SELECT * FROM test");
         while(query.next())
@@ -34,12 +36,33 @@ void StationModel::getdata()
                 Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
                 addstation(station);
             }
-            qDebug() << query.value("station_no_").toString() + query.value("station_name").toString();
+            //qDebug() << query.value("station_no_").toString() + query.value("station_name").toString();
         }
+        station_count = number;
+        query.clear();
+        systemmap.Init(station_count);
+        query.exec("SELECT graph FROM testgraph");
+        query.first();
+        i = 0;
+        while(query.next())
+        {
+            serial_distance = query.value("graph").toString();//.toUtf8().data();
+            qDebug() << "station count" << station_count;
+            //qDebug() << serial_distance << endl;
+            int cost, row = i*station_count;
+            for(j=0; j<station_count; j++)
+            {
+                cost = serial_distance.section(' ',j,j).toInt();
+                qDebug() << "i*j" << row+j;
+                systemmap.setedge(i,j,cost);
+            }
+            i++;
+        }
+        //systemmap.qdebugwholegraph();
     }
     else
     {
-        qDebug() << "connection open failed" << endl;
+        qDebug() << "connection open failed";
     }
     db.close();
 }
@@ -78,15 +101,15 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     }
     else if(role == Same1Role)
     {
-        return station.samestaitions(1);
+        return station.samestations(1);
     }
     else if(role == Same2Role)
     {
-        return station.samestaitions(2);
+        return station.samestations(2);
     }
     else if(role == Same3Role)
     {
-        return station.samestaitions(3);
+        return station.samestations(3);
     }
     else if(role == StnNumRole)
     {
@@ -141,5 +164,7 @@ QHash<int, QByteArray> StationModel::roleNames() const
 
 void StationModel::search(int source, int destination)
 {
-    RouteSearch routesearch
+    int i = source;
+    i = destination;
+    //RouteSearch routesearch
 }

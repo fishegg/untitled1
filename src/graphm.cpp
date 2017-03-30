@@ -10,7 +10,7 @@ Graphm::Graphm(int num_vert){
 }
 
 Graphm::~Graphm(){
-    cout<<"~Graphm"<<endl;
+    //cout<<"~Graphm"<<endl;
     delete [] mark;
     for(int i=0; i<num_vertex; i++){
         delete [] matrix[i];
@@ -99,5 +99,18 @@ void Graphm::clearmark(){
     int i;
     for(i=0; i<num_vertex; i++){
         mark[i] = 0;
+    }
+}
+
+void Graphm::qdebugwholegraph()
+{
+    int i,j;
+    for(i=0;i<num_vertex;i++)
+    {
+        for(j=0;j<num_vertex;j++)
+        {
+            qDebug() << matrix[i][j] << " ";
+        }
+        qDebug() << endl;
     }
 }

@@ -1,5 +1,6 @@
 #ifndef GRAPHM_H
 #define GRAPHM_H
+#include <qdebug.h>
 
 
 class Graphm
@@ -24,6 +25,7 @@ public:
     int getmark(int v);
     void setmark(int v, int val);
     void clearmark();
+    void qdebugwholegraph();
 };
 
 #endif // GRAPHM_H

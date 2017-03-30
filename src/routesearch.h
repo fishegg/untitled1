@@ -52,14 +52,14 @@ private:
 
 public:
     RouteSearch(int numvert);
-    ~Routesearch();
+    ~RouteSearch();
     void getallnumber(int source, int destination, QList<Station> *stationlist);
     void dijkstra(Graphm* G, int s, bool forcompare);
-    void search(Graphm* G, QList<Station>* stationlist, string s, string d);
+    void search(Graphm* G, QList<Station>* stationlist, int s, int d);
     //void printdistance();
     //void printroute(vector<Station>* list);
     //void printresult(vector<Station>* list);
-    QStack getresult();
+    //QStack* getresult();
 };
 
 #endif // ROUTESEARCH_H

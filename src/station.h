@@ -18,7 +18,7 @@ public:
     bool isinterchange() const;
     int linescount() const;
     QString linename() const;
-    int samestaitions(int i) const;
+    int samestations(int i) const;
 };
 
 #endif // STATION_H

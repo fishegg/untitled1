@@ -17,8 +17,8 @@ RouteSearch::RouteSearch(int numvert)
     destination = -1;
 }
 
-RouteSearch::~Route_search(){
-    cout<<"~Route_search"<<endl;
+RouteSearch::~RouteSearch(){
+    //cout<<"~Route_search"<<endl;
     delete [] Distance;
     Distance = NULL;
     delete [] Distance_temp;
@@ -31,13 +31,13 @@ RouteSearch::~Route_search(){
 
 void RouteSearch::getallnumber(int s, int d, QList<Station> *stationlist){
     //cout<<"conv"<<endl;
-    int i, j;
+    int i;
     //bool source_done = false, destination_done = false;//记录起点终点转换好没有
     Station station_temp;
 
     station_temp = stationlist->at(s);
     for(i=0; i<station_temp.linescount(); i++){//看看这个站有多少条线
-        switch(j){
+        switch(i){
         case 0:
             source_list.enqueue(station_temp.number());//记录起点编号
             break;
@@ -49,7 +49,7 @@ void RouteSearch::getallnumber(int s, int d, QList<Station> *stationlist){
 
     station_temp = stationlist->at(d);
     for(i=0; i<station_temp.linescount(); i++){//看看这个站有多少条线
-        switch(j){
+        switch(i){
         case 0:
             destination_list.enqueue(station_temp.number());//记录终点编号
             break;
@@ -187,7 +187,7 @@ void RouteSearch::search(Graphm* G, QList<Station>* stationlist, int s, int d){
                 if(Distance[destination] > Distance_temp[destination_temp]){
                     source = source_temp;
                     destination = destination_temp;
-                    for(k=0; k<list->size(); k++){
+                    for(k=0; k<stationlist->size(); k++){
                         Distance[k] = Distance_temp[k];
                         From[k] = From_temp[k];
                     }
@@ -198,7 +198,7 @@ void RouteSearch::search(Graphm* G, QList<Station>* stationlist, int s, int d){
     }
 }
 
-QStack getresult()
+/*QStack* getresult()
 {
     QStack<int> route;
     int prev = destination;
@@ -210,5 +210,5 @@ QStack getresult()
         i++;
     }while(prev != source);
     route.push(prev);
-    return route;
-}
+    return *route;
+}*/

@@ -16,10 +16,6 @@ Dialog {
         listmodel.update()
     }
 
-    StationModel {
-        id: stationmodel
-    }
-
     /*ListModel {
         id: originalmodel
         function init() {

@@ -56,7 +56,7 @@ QString Station::linename() const
     return line;
 }
 
-int Station::samestaitions(int i) const
+int Station::samestations(int i) const
 {
     return same[i-1];
 }
