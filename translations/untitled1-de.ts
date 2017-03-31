@@ -18,6 +18,10 @@
         <source>Show Page 2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>正在加载</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SecondPage</name>

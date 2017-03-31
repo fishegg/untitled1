@@ -41,6 +41,7 @@ ApplicationWindow
     allowedOrientations: Orientation.All
     _defaultPageOrientations: Orientation.All
 
+    property int load_status: StationModel.Null
     StationModel {
         id: stationmodel
     }

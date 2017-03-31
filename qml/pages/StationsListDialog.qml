@@ -16,10 +16,6 @@ Dialog {
         listmodel.update()
     }
 
-    StationModel {
-        id: stationmodel
-    }
-
     /*ListModel {
         id: originalmodel
         function init() {
@@ -41,14 +37,16 @@ Dialog {
                 clear()
                 for (var i=0; i<stationmodel.rowCount(); i++) {
                     if (listview.headerItem.text == "" ||
-                            stationmodel.singledata(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||
-                            stationmodel.singledata(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0// ||
-                            /*stationmodel.singledata(i,StationModel.LineRole).indexOf(listview.headerItem.text >= 0)*/) {
-                        //console.log(stationmodel.singledata(i,StationModel.station_name))
-                        append({"number": stationmodel.singledata(i,StationModel.NumRole),
-                                   "station_name": stationmodel.singledata(i,StationModel.StnNameRole),
-                                   "station_number": stationmodel.singledata(i,StationModel.StnNumRole),
-                                   "line_name": stationmodel.singledata(i,StationModel.LineRole)})
+                            stationmodel.data(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||
+                            stationmodel.data(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0// ||
+                            /*stationmodel.data(i,StationModel.LineRole).indexOf(listview.headerItem.text >= 0)*/) {
+                        //console.log(stationmodel.data(i,StationModel.station_name))
+                        if(stationmodel.data(i,StationModel.StnNameRole) !== "无") {
+                            append({"number": stationmodel.data(i,StationModel.NumRole),
+                                       "station_name": stationmodel.data(i,StationModel.StnNameRole),
+                                       "station_number": stationmodel.data(i,StationModel.StnNumRole),
+                                       "line_name": stationmodel.data(i,StationModel.LineRole)})
+                        }
                     }
                 }
             }

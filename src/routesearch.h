@@ -13,6 +13,7 @@ private:
     int *Distance_temp;
     int *From;
     int *From_temp;
+    int vertex;
     int source, destination;
     QQueue<int> source_list;
     QQueue<int> destination_list;
@@ -53,13 +54,14 @@ private:
 public:
     RouteSearch(int numvert);
     ~RouteSearch();
-    void getallnumber(int source, int destination, QList<Station> *stationlist);
+    void cleararray(bool temp_array);
+    void getallnumber(int source, int destination, const QList<Station> &stationlist);
     void dijkstra(Graphm* G, int s, bool forcompare);
-    void search(Graphm* G, QList<Station>* stationlist, int s, int d);
+    void search(Graphm* G, const QList<Station> &stationlist, int s, int d);
     //void printdistance();
     //void printroute(vector<Station>* list);
     //void printresult(vector<Station>* list);
-    //QStack* getresult();
+    void getresult(QList<int>* routestationlist, const QList<Station> &stationlist);
 };
 
 #endif // ROUTESEARCH_H

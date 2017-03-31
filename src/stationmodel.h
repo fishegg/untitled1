@@ -12,6 +12,7 @@ class StationModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_ENUMS(StationRoles)
+    Q_ENUMS(LoadStatus)
 public:
     enum StationRoles {
         NumRole = Qt::UserRole + 1,
@@ -24,20 +25,30 @@ public:
         LineRole,
         InterchangeRole
     };
+    enum LoadStatus {
+        Null,
+        Ready,
+        Error
+    };
 
     StationModel(QObject *parent = 0);
-    void getdata();
+    Q_INVOKABLE int getdata();
     void addstation(const Station &station);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    Q_INVOKABLE QVariant singledata(const int &row, int role = Qt::DisplayRole) const;
-    Q_INVOKABLE void search(int source, int destination);
+    Q_INVOKABLE QVariant data(const int &row, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE void search(int s, int d);
+    Q_INVOKABLE int routedata(const int &index) const;
+    Q_INVOKABLE int routestationlistrowcount() const;
 protected:
     QHash<int, QByteArray> roleNames() const;
 private:
     QList<Station> stationlist;
-    QList<Station> routestationlist;
+    QList<int> routestationlist;
     Graphm systemmap;
+    int station_count;
+    QList<int>* routestationlist_ptr = &routestationlist;
+    Graphm* systemmap_ptr = &systemmap;
 };
 
 #endif // STATIONMODEL_H

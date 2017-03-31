@@ -40,6 +40,16 @@ Page {
 
     Component.onCompleted: {
         console.log("count"+stationmodel.rowCount())
+        //load_status = stationmodel.getdata()
+    }
+
+    Timer {
+        interval: 1
+        running: true
+        onTriggered: {
+            load_status = stationmodel.getdata()
+            stop()
+        }
     }
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
@@ -65,7 +75,9 @@ Page {
             spacing: Theme.paddingMedium
             PageHeader {
                 id: header
-                title: qsTr("Show Page 2")
+                title: load_status === StationModel.Null ?
+                           qsTr("正在加载") :
+                           qsTr("Show Page 2")
             }
 
             Row {
@@ -76,7 +88,7 @@ Page {
                     label: "起点"
                     value: "选择"
                     onClicked: openlistdialog()
-                    property int source
+                    property int source: 0
                     function openlistdialog() {
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
@@ -91,7 +103,7 @@ Page {
                     label: "终点"
                     value: "选择"
                     onClicked: openlistdialog()
-                    property int destination
+                    property int destination: 1
                     function openlistdialog() {
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
@@ -102,17 +114,41 @@ Page {
                 }
             }
 
+            Button {
+                id: button
+                text: "出发"
+                onClicked: {
+                    console.log(sourcebutton.source+">"+destinationbutton.destination)
+                    stationmodel.search(sourcebutton.source,destinationbutton.destination)
+                    listmodel.update()
+                }
+            }
+
             SilicaListView {
                 id: listview
                 width: parent.width
                 height: page.height - header.height - row.height - column.spacing*2
                 clip: true
 
-                model: stationmodel
+                model: ListModel {
+                    id: listmodel
 
-                section.property: "line_name"
-                section.delegate: SectionHeader {
-                    text: section
+                    function update() {
+                        console.log("count"+stationmodel.rowCount())
+                        clear()
+                        for(var j=0; j<stationmodel.routestationlistrowcount(); j++)
+                        {
+                            console.log(stationmodel.routedata(j))
+                            for (var i=0; i<stationmodel.rowCount(); i++) {
+                                if(stationmodel.data(i,StationModel.NumRole) === stationmodel.routedata(j)) {
+                                    append({"number": stationmodel.data(i,StationModel.NumRole),
+                                               "station_name": stationmodel.data(i,StationModel.StnNameRole),
+                                               "station_number": stationmodel.data(i,StationModel.StnNumRole),
+                                               "line_name": stationmodel.data(i,StationModel.LineRole)})
+                                }
+                            }
+                        }
+                    }
                 }
 
                 delegate: BackgroundItem {

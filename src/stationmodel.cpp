@@ -4,14 +4,14 @@
 
 StationModel::StationModel(QObject *parent) : QAbstractListModel(parent)
 {
-    getdata();
+    //getdata();
 }
 
-void StationModel::getdata()
+int StationModel::getdata()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("/home/nemo/testdata/test.sqlite");
-    int station_count = 0, i, j;
+    int i, j;
     if(db.open())
     {
         qDebug() << "connection opened" << endl;
@@ -31,40 +31,44 @@ void StationModel::getdata()
             same_station[0] = query.value("same_no_1").toInt();
             same_station[1] = query.value("same_no_2").toInt();
             same_station[2] = query.value("same_no_3").toInt();
-            if(station_name != "无")
+            /*if(station_name != "无")
             {
                 Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
                 addstation(station);
-            }
+            }*/
+            Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
+            addstation(station);
             //qDebug() << query.value("station_no_").toString() + query.value("station_name").toString();
         }
-        station_count = number;
+        station_count = number + 1;
         query.clear();
         systemmap.Init(station_count);
         query.exec("SELECT graph FROM testgraph");
         query.first();
         i = 0;
-        while(query.next())
+        do
         {
             serial_distance = query.value("graph").toString();//.toUtf8().data();
             qDebug() << "station count" << station_count;
-            //qDebug() << serial_distance << endl;
+            qDebug() << serial_distance << endl;
             int cost, row = i*station_count;
             for(j=0; j<station_count; j++)
             {
                 cost = serial_distance.section(' ',j,j).toInt();
-                qDebug() << "i*j" << row+j;
                 systemmap.setedge(i,j,cost);
+                qDebug() << "i*j" << row+j << systemmap.weight(i,j);
             }
             i++;
-        }
+        }while(query.next());
         //systemmap.qdebugwholegraph();
     }
     else
     {
         qDebug() << "connection open failed";
+        return Error;
     }
     db.close();
+    return Ready;
 }
 
 void StationModel::addstation(const Station &station)
@@ -131,7 +135,7 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant StationModel::singledata(const int &row, int role) const
+QVariant StationModel::data(const int &row, int role) const
 {
     if(row < 0 || row > stationlist.count())
     {
@@ -162,9 +166,19 @@ QHash<int, QByteArray> StationModel::roleNames() const
     return roles;
 }
 
-void StationModel::search(int source, int destination)
+void StationModel::search(int s, int d)
 {
-    int i = source;
-    i = destination;
-    //RouteSearch routesearch
+    RouteSearch routesearch(station_count);
+    routesearch.search(systemmap_ptr,stationlist,s,d);
+    routesearch.getresult(routestationlist_ptr,stationlist);
+}
+
+int StationModel::routedata(const int &index) const
+{
+    return routestationlist.at(index);
+}
+
+int StationModel::routestationlistrowcount() const
+{
+    return routestationlist.count();
 }
