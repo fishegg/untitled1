@@ -11,13 +11,13 @@ int StationModel::getdata()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("/home/nemo/testdata/test.sqlite");
-    int i, j;
+    int i;//, j;
     if(db.open())
     {
         qDebug() << "connection opened" << endl;
-        int number, lines_count, same_station[3];
+        int number = 0, lines_count, same_station[3];
         QString station_name, station_number, line_name;
-        QString serial_distance;
+        //QString serial_distance;
         bool interchange;
         QSqlQuery query("SELECT * FROM test");
         while(query.next())
@@ -43,21 +43,25 @@ int StationModel::getdata()
         station_count = number + 1;
         query.clear();
         systemmap.Init(station_count);
-        query.exec("SELECT graph FROM testgraph");
+        query.exec("SELECT weight FROM testgraph");
         query.first();
         i = 0;
         do
         {
-            serial_distance = query.value("graph").toString();//.toUtf8().data();
-            qDebug() << "station count" << station_count;
-            qDebug() << serial_distance << endl;
-            int cost, row = i*station_count;
-            for(j=0; j<station_count; j++)
+            int cost;//, row = i*station_count;
+            int row = i / station_count, column = i % station_count;
+            //serial_distance = query.value("weight").toString();//.toUtf8().data();
+            cost = query.value("weight").toInt();
+            //qDebug() << "station count" << station_count;
+            //qDebug() << serial_distance << endl;
+            /*for(j=0; j<station_count; j++)
             {
                 cost = serial_distance.section(' ',j,j).toInt();
                 systemmap.setedge(i,j,cost);
                 qDebug() << "i*j" << row+j << systemmap.weight(i,j);
-            }
+            }*/
+            systemmap.setedge(row,column,cost);
+            qDebug() << i << row << column << systemmap.weight(row,column);
             i++;
         }while(query.next());
         //systemmap.qdebugwholegraph();
