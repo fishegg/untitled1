@@ -23,7 +23,8 @@ public:
         StnNumRole,
         StnNameRole,
         LineRole,
-        InterchangeRole
+        InterchangeRole,
+        InUseRole
     };
     enum LoadStatus {
         Null,
@@ -32,7 +33,10 @@ public:
     };
 
     StationModel(QObject *parent = 0);
-    Q_INVOKABLE int getdata();
+    ~StationModel();
+    Q_INVOKABLE int getfulllistdata();
+    Q_INVOKABLE int getmapdata();
+    Q_INVOKABLE int getroutelistdata();
     void addstation(const Station &station);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -44,11 +48,13 @@ protected:
     QHash<int, QByteArray> roleNames() const;
 private:
     QList<Station> stationlist;
+    int* station_index;
     QList<int> routestationlist;
     Graphm systemmap;
     int station_count;
     QList<int>* routestationlist_ptr = &routestationlist;
     Graphm* systemmap_ptr = &systemmap;
+    QSqlDatabase db;
 };
 
 #endif // STATIONMODEL_H

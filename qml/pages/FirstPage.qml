@@ -47,7 +47,8 @@ Page {
         interval: 1
         running: true
         onTriggered: {
-            load_status = stationmodel.getdata()
+            stationmodel.getfulllistdata()
+            appwindow.load_status = stationmodel.getmapdata()
             stop()
         }
     }
@@ -90,6 +91,7 @@ Page {
                     onClicked: openlistdialog()
                     property int source: 0
                     function openlistdialog() {
+                        stationmodel.getfulllistdata()
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
                             value = dialog.selected_station
@@ -105,6 +107,7 @@ Page {
                     onClicked: openlistdialog()
                     property int destination: 1
                     function openlistdialog() {
+                        stationmodel.getfulllistdata()
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
                             value = dialog.selected_station
@@ -120,7 +123,8 @@ Page {
                 onClicked: {
                     console.log(sourcebutton.source+">"+destinationbutton.destination)
                     stationmodel.search(sourcebutton.source,destinationbutton.destination)
-                    listmodel.update()
+                    //listmodel.update()
+                    stationmodel.getroutelistdata()
                 }
             }
 
@@ -130,7 +134,7 @@ Page {
                 height: page.height - header.height - row.height - column.spacing*2
                 clip: true
 
-                model: ListModel {
+                model: stationmodel/*ListModel {
                     id: listmodel
 
                     function update() {
@@ -149,7 +153,7 @@ Page {
                             }
                         }
                     }
-                }
+                }*/
 
                 delegate: BackgroundItem {
                     Label {

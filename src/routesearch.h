@@ -55,9 +55,9 @@ public:
     RouteSearch(int numvert);
     ~RouteSearch();
     void cleararray(bool temp_array);
-    void getallnumber(int source, int destination, const QList<Station> &stationlist);
+    void getallnumber(int source, int destination, const QList<Station> &stationlist, int station_index[]);
     void dijkstra(Graphm* G, int s, bool forcompare);
-    void search(Graphm* G, const QList<Station> &stationlist, int s, int d);
+    void search(Graphm* G, const QList<Station> &stationlist, int station_index[], int s, int d);
     //void printdistance();
     //void printroute(vector<Station>* list);
     //void printresult(vector<Station>* list);

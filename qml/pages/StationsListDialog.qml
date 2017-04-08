@@ -13,7 +13,7 @@ Dialog {
 
     Component.onCompleted: {
         //originalmodel.init()
-        listmodel.update()
+        //listmodel.update()
     }
 
     /*ListModel {
@@ -29,7 +29,7 @@ Dialog {
     SilicaListView {
         id: listview
         anchors.fill: parent
-        model: ListModel {
+        model: stationmodel/*ListModel {
             id: listmodel
 
             function update() {
@@ -37,11 +37,11 @@ Dialog {
                 clear()
                 for (var i=0; i<stationmodel.rowCount(); i++) {
                     if (listview.headerItem.text == "" ||
-                            stationmodel.data(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||
-                            stationmodel.data(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0// ||
-                            /*stationmodel.data(i,StationModel.LineRole).indexOf(listview.headerItem.text >= 0)*/) {
+                            stationmodel.data(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||*/
+                            //stationmodel.data(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0// ||
+                            /*stationmodel.data(i,StationModel.LineRole).indexOf(listview.headerItem.text >= 0)*///) {
                         //console.log(stationmodel.data(i,StationModel.station_name))
-                        if(stationmodel.data(i,StationModel.StnNameRole) !== "无") {
+                        /*if(stationmodel.data(i,StationModel.StnNameRole) !== "无") {
                             append({"number": stationmodel.data(i,StationModel.NumRole),
                                        "station_name": stationmodel.data(i,StationModel.StnNameRole),
                                        "station_number": stationmodel.data(i,StationModel.StnNumRole),
@@ -50,12 +50,14 @@ Dialog {
                     }
                 }
             }
-        }
+        }*/
 
-        header: SearchField {
-            id: searchField
-            width: parent.width - Theme.paddingLarge
-            onTextChanged: listmodel.update()
+        header: Component {
+            SearchField {
+                id: searchField
+                width: parent.width - Theme.paddingLarge
+                onTextChanged: listmodel.update()
+            }
         }
 
         section.property: "line_name"

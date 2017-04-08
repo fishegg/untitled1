@@ -5,43 +5,74 @@
 StationModel::StationModel(QObject *parent) : QAbstractListModel(parent)
 {
     //getdata();
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("/home/nemo/testdata/test.sqlite");
+    if(db.open())
+    {
+        qDebug() << "connection opened" << endl;
+        QSqlQuery query("SELECT * FROM information");
+        query.next();
+        station_count = query.value("station_count").toInt();
+        qDebug() << "station count" << station_count;
+        station_index = new int[station_count];
+        for(int i;i<station_count;i++)
+            station_index[i]=-1;
+    }
 }
 
-int StationModel::getdata()
+StationModel::~StationModel()
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/nemo/testdata/test.sqlite");
-    int i;//, j;
+    db.close();
+    delete [] station_index;
+    station_index = nullptr;
+}
+
+int StationModel::getfulllistdata()
+{
+    //int i;//, j;
     if(db.open())
     {
         qDebug() << "connection opened" << endl;
         int number = 0, lines_count, same_station[3];
         QString station_name, station_number, line_name;
         //QString serial_distance;
-        bool interchange;
+        bool interchange, in_use;
+
+        beginResetModel();
+        stationlist.clear();
+        endResetModel();
+
         QSqlQuery query("SELECT * FROM test");
         while(query.next())
         {
-            station_number = query.value("station_no_").toString();
-            number = query.value("no_").toInt();
-            station_name = query.value("station_name").toString();
-            interchange = query.value("interchange").toBool();
-            lines_count = query.value("lines_count").toInt();
-            line_name = query.value("line_name").toString();
-            same_station[0] = query.value("same_no_1").toInt();
-            same_station[1] = query.value("same_no_2").toInt();
-            same_station[2] = query.value("same_no_3").toInt();
-            /*if(station_name != "无")
+            in_use = query.value("in_use").toBool();
+            if(in_use != false)
             {
+                station_number = query.value("station_no_").toString();
+                number = query.value("no_").toInt();
+                station_name = query.value("station_name").toString();
+                interchange = query.value("interchange").toBool();
+                lines_count = query.value("lines_count").toInt();
+                line_name = query.value("line_name").toString();
+                same_station[0] = query.value("same_no_1").toInt();
+                same_station[1] = query.value("same_no_2").toInt();
+                same_station[2] = query.value("same_no_3").toInt();
                 Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
                 addstation(station);
-            }*/
-            Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
-            addstation(station);
+                station_index[number] = stationlist.size() - 1;
+            }
+            /**/
+            //Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
+            //addstation(station);
             //qDebug() << query.value("station_no_").toString() + query.value("station_name").toString();
         }
-        station_count = number + 1;
-        query.clear();
+        //station_count = number + 1;
+        if(station_count != number + 1)
+        {
+            return Error;
+        }
+
+        /*query.clear();
         systemmap.Init(station_count);
         query.exec("SELECT weight FROM testgraph");
         query.first();
@@ -60,18 +91,134 @@ int StationModel::getdata()
                 systemmap.setedge(i,j,cost);
                 qDebug() << "i*j" << row+j << systemmap.weight(i,j);
             }*/
-            systemmap.setedge(row,column,cost);
-            qDebug() << i << row << column << systemmap.weight(row,column);
-            i++;
-        }while(query.next());
+            //systemmap.setedge(row,column,cost);
+            //qDebug() << i << row << column << systemmap.weight(row,column);
+            //i++;
+        //}while(query.next());
         //systemmap.qdebugwholegraph();
+        qDebug() << "get full list data finished";
     }
     else
     {
         qDebug() << "connection open failed";
         return Error;
     }
-    db.close();
+    //db.close();
+    return Ready;
+}
+
+int StationModel::getmapdata()
+{
+    int i;//, j;
+    if(db.open())
+    {
+        qDebug() << "connection opened";
+        qDebug() << "station count" << station_count;
+
+        if(station_count == 0)
+        {
+            return Error;
+        }
+
+        systemmap.Init(station_count);
+        QSqlQuery query("SELECT weight FROM testgraph");
+        i = 0;
+        while(query.next())
+        {
+            int cost;//, row = i*station_count;
+            int row = i / station_count, column = i % station_count;
+            //serial_distance = query.value("weight").toString();//.toUtf8().data();
+            cost = query.value("weight").toInt();
+            //qDebug() << "station count" << station_count;
+            //qDebug() << serial_distance << endl;
+            /*for(j=0; j<station_count; j++)
+            {
+                cost = serial_distance.section(' ',j,j).toInt();
+                systemmap.setedge(i,j,cost);
+                qDebug() << "i*j" << row+j << systemmap.weight(i,j);
+            }*/
+            systemmap.setedge(row,column,cost);
+            //qDebug() << i << row << column << systemmap.weight(row,column);
+            i++;
+        }
+        /*query.exec("SELECT weight FROM testgraph");
+        query.first();
+        i = 0;
+        do
+        {
+            int cost;//, row = i*station_count;
+            int row = i / station_count, column = i % station_count;
+            //serial_distance = query.value("weight").toString();//.toUtf8().data();
+            cost = query.value("weight").toInt();
+            //qDebug() << "station count" << station_count;
+            //qDebug() << serial_distance << endl;
+            /*for(j=0; j<station_count; j++)
+            {
+                cost = serial_distance.section(' ',j,j).toInt();
+                systemmap.setedge(i,j,cost);
+                qDebug() << "i*j" << row+j << systemmap.weight(i,j);
+            }*/
+            //systemmap.setedge(row,column,cost);
+            //qDebug() << i << row << column << systemmap.weight(row,column);
+            /*i++;
+        }while(query.next());*/
+        //systemmap.qdebugwholegraph();
+        qDebug() << "get map data finished";
+    }
+    else
+    {
+        qDebug() << "connection open failed";
+        return Error;
+    }
+    //db.close();
+    return Ready;
+}
+
+int StationModel::getroutelistdata()
+{
+    int i;//, j;
+    if(db.open())
+    {
+        qDebug() << "connection opened" << endl;
+        int number = 0, lines_count, same_station[3];
+        QString station_name, station_number, line_name;
+        bool interchange;
+        int number_temp = 0;
+        QSqlQuery query;
+
+        beginResetModel();
+        stationlist.clear();
+        endResetModel();
+
+        while(!routestationlist.isEmpty())
+        {
+            number_temp = routestationlist.constFirst();
+            routestationlist.removeFirst();
+            query.prepare("SELECT * FROM test WHERE no_=:number");
+            query.bindValue(":number",number_temp);
+            query.exec();
+            query.first();
+            station_number = query.value("station_no_").toString();
+            number = query.value("no_").toInt();
+            station_name = query.value("station_name").toString();
+            interchange = query.value("interchange").toBool();
+            lines_count = query.value("lines_count").toInt();
+            line_name = query.value("line_name").toString();
+            same_station[0] = query.value("same_no_1").toInt();
+            same_station[1] = query.value("same_no_2").toInt();
+            same_station[2] = query.value("same_no_3").toInt();
+            Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
+            addstation(station);
+            query.clear();
+        }
+        qDebug() << "get route list data finished";
+    }
+    else
+    {
+        qDebug() << "connection open failed";
+        return Error;
+    }
+    //db.close();
     return Ready;
 }
 
@@ -173,7 +320,7 @@ QHash<int, QByteArray> StationModel::roleNames() const
 void StationModel::search(int s, int d)
 {
     RouteSearch routesearch(station_count);
-    routesearch.search(systemmap_ptr,stationlist,s,d);
+    routesearch.search(systemmap_ptr,stationlist,station_index,s,d);
     routesearch.getresult(routestationlist_ptr,stationlist);
 }
 
