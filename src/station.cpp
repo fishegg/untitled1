@@ -7,23 +7,33 @@ Station::Station()
     stn_name = "null";
     stn_num = "null";
     interchange = false;
-    line = "null";
+    line_name = "null";
+    line_id = 0;
     same[0] = -1;
     same[1] = -1;
     same[2] = -1;
+    _action = "";
+    _direction = "";
 }
 
-Station::Station(int n,int c,int s1,int s2,int s3,QString snum,QString sname,QString l,bool i)
+Station::Station(int n,int c,int s1,int s2,int s3,QString snum,QString sname,int lid,QString lname,bool i)
 {
     num = n;
     count = c;
     stn_name = sname;
     stn_num = snum;
     interchange = i;
-    line = l;
+    line_name = lname;
+    line_id = lid;
     same[0] = s1;
     same[1] = s2;
     same[2] = s3;
+}
+
+void Station::setactiondirection(QString a,QString d)
+{
+    _action = a;
+    _direction = d;
 }
 
 int Station::number() const
@@ -53,10 +63,25 @@ int Station::linescount() const
 
 QString Station::linename() const
 {
-    return line;
+    return line_name;
+}
+
+int Station::lineid() const
+{
+    return line_id;
 }
 
 int Station::samestations(int i) const
 {
     return same[i-1];
+}
+
+QString Station::action() const
+{
+    return _action;
+}
+
+QString Station::direction() const
+{
+    return _direction;
 }

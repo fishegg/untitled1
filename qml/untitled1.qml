@@ -43,6 +43,8 @@ ApplicationWindow
     _defaultPageOrientations: Orientation.All
 
     property int load_status: StationModel.Null
+    //stationmodel.getfulllistdata()
+    //load_status = stationmodel.getmapdata()
     StationModel {
         id: stationmodel
     }

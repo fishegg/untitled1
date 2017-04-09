@@ -24,7 +24,8 @@ public:
         StnNameRole,
         LineRole,
         InterchangeRole,
-        InUseRole
+        ActionRole,
+        DirectionRole
     };
     enum LoadStatus {
         Null,
@@ -38,6 +39,7 @@ public:
     Q_INVOKABLE int getmapdata();
     Q_INVOKABLE int getroutelistdata();
     void addstation(const Station &station);
+    void resetmodel();
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant data(const int &row, int role = Qt::DisplayRole) const;

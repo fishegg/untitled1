@@ -45,10 +45,10 @@ Page {
 
     Timer {
         interval: 1
-        running: true
+        //running: true
         onTriggered: {
-            stationmodel.getfulllistdata()
-            appwindow.load_status = stationmodel.getmapdata()
+            //stationmodel.getfulllistdata()
+            //appwindow.load_status = stationmodel.getmapdata()
             stop()
         }
     }
@@ -156,12 +156,48 @@ Page {
                 }*/
 
                 delegate: BackgroundItem {
-                    Label {
-                        anchors {
-                            verticalCenter: parent.verticalCenter
-                            horizontalCenter: parent.horizontalCenter
+                    Column {
+                        width: parent.width
+                        Label {
+                            anchors {
+                                //verticalCenter: parent.verticalCenter
+                                horizontalCenter: parent.horizontalCenter
+                            }
+                            //text: station_number + " " + station_name + " " + action + " " + line_name + " " + direction + "方向列车"
+                            text: station_number + " " + station_name/*{
+                                if(action === "" && direction ==="")
+                                    station_number + station_name
+                                else if(action !== "" && direction === "")
+                                    station_number + station_name + action
+                                else
+                                    station_number + station_name + action + line_name + direction + "方向"
+                            }*/
                         }
-                        text: station_number + " " + station_name
+                        Label {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            enabled: !(action === "" && direction ==="")
+                            visible: !(action === "" && direction ==="")
+                            text: {
+                                if(action !== "" && direction === "")
+                                    action
+                                else
+                                    action + line_name + direction + "方向列车"
+                            }
+                        }
+                        /*Component {
+                            Loader {
+                                sourceComponent: Component {
+                                    Label {
+                                        text: {
+                                            if(action !== "" && direction === "")
+                                                action
+                                            else
+                                                action + line_name + direction + "方向列车"
+                                        }
+                                    }
+                                }
+                            }
+                        }*/
                     }
                     onClicked: console.log("click")
                 }

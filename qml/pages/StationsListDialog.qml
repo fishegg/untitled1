@@ -13,7 +13,7 @@ Dialog {
 
     Component.onCompleted: {
         //originalmodel.init()
-        //listmodel.update()
+        listmodel.update()
     }
 
     /*ListModel {
@@ -29,28 +29,29 @@ Dialog {
     SilicaListView {
         id: listview
         anchors.fill: parent
-        model: stationmodel/*ListModel {
+        model: /*stationmodel*/ListModel {
             id: listmodel
 
             function update() {
                 console.log("count"+stationmodel.rowCount())
                 clear()
                 for (var i=0; i<stationmodel.rowCount(); i++) {
-                    if (listview.headerItem.text == "" ||
-                            stationmodel.data(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||*/
-                            //stationmodel.data(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0// ||
-                            /*stationmodel.data(i,StationModel.LineRole).indexOf(listview.headerItem.text >= 0)*///) {
+                    if (listview.headerItem.text === "" ||
+                            stationmodel.data(i,StationModel.StnNumRole).indexOf(listview.headerItem.text) >= 0 ||
+                            stationmodel.data(i,StationModel.StnNameRole).indexOf(listview.headerItem.text) >= 0) {
                         //console.log(stationmodel.data(i,StationModel.station_name))
                         /*if(stationmodel.data(i,StationModel.StnNameRole) !== "无") {
-                            append({"number": stationmodel.data(i,StationModel.NumRole),
-                                       "station_name": stationmodel.data(i,StationModel.StnNameRole),
-                                       "station_number": stationmodel.data(i,StationModel.StnNumRole),
-                                       "line_name": stationmodel.data(i,StationModel.LineRole)})
-                        }
+
+                        }*/
+                        append({"number": stationmodel.data(i,StationModel.NumRole),
+                                   "station_name": stationmodel.data(i,StationModel.StnNameRole),
+                                   "station_number": stationmodel.data(i,StationModel.StnNumRole),
+                                   "line_name": stationmodel.data(i,StationModel.LineRole)
+                               })
                     }
                 }
             }
-        }*/
+        }
 
         header: Component {
             SearchField {
