@@ -20,6 +20,33 @@
     </message>
 </context>
 <context>
+    <name>RouteListViewDelegate</name>
+    <message>
+        <source>乘坐 %1 往%2方向 列车</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>下车</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>换乘 %1 往%2方向 列车</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>下车，出闸</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1入闸，换乘 %2 往%3方向 列车</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>下车，到达</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SecondPage</name>
     <message>
         <source>Nested Page</source>

@@ -9,11 +9,12 @@ private:
     int num, count, same[3], line_id;
     QString stn_num, stn_name, line_name;
     bool interchange;
-    QString _action, _direction;
+    QString /*_action, */_direction;
+    int _action;
 public:
     Station();
     Station(int n,int c,int s1,int s2,int s3,QString snum,QString sname,int lid,QString lname,bool i);
-    void setactiondirection(QString a,QString d);
+    void setactiondirection(int a,QString d);
     int number() const;
     QString stationnumber() const;
     QString stationname() const;
@@ -22,7 +23,7 @@ public:
     QString linename() const;
     int lineid() const;
     int samestations(int i) const;
-    QString action() const;
+    int action() const;
     QString direction() const;
 };
 

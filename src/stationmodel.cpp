@@ -193,7 +193,8 @@ int StationModel::getroutelistdata()
         int number = 0, lines_count, same_station[3], line_id;
         QString station_name, station_number, line_name;
         bool interchange;
-        QString action(""), direction("");
+        QString /*action(""), */direction("");
+        int action = OnTrain;
         int number_temp = 0;
         QSqlQuery query;
         QSqlQuery queryline;
@@ -240,7 +241,7 @@ int StationModel::getroutelistdata()
             line_name = queryline.value("line_name_zh").toString();
             if(i == 1)
             {
-                action = "乘坐";
+                action = Depart;
                 number_temp = routestationlist.constFirst();
                 if(number_temp > number)
                 {
@@ -266,11 +267,11 @@ int StationModel::getroutelistdata()
             }
             else if(i == route_station_count)
             {
-                action = "到达";
+                action = Arrive;
             }
             else if(transfer)
             {
-                action = "换乘";
+                action = Transfer;
                 number_temp = routestationlist.constFirst();
                 if(number_temp > number)
                 {
@@ -303,16 +304,22 @@ int StationModel::getroutelistdata()
                         same_station[2] == number_temp)
                 {
                     transfer = true;
-                    action = "落车";
+                    action = GetOffTransfer;
                 }
             }
+            else {
+                action = OnTrain;
+            }
             Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_id,line_name,interchange);
-            if(action != "" || direction != "")
+            /*if(action != -1 || direction != "")
             {
                 station.setactiondirection(action,direction);
-                action = "";
+                action = -1;
                 direction = "";
-            }
+            }*/
+            station.setactiondirection(action,direction);
+            action = OnTrain;
+            direction = "";
             addstation(station);
         }
 

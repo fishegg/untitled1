@@ -49,7 +49,8 @@ TRANSLATIONS += translations/untitled1-de.ts
 DISTFILES += \
     qml/TestModel.qml \
     testdata/test.sqlite \
-    qml/pages/StationsListDialog.qml
+    qml/pages/StationsListDialog.qml \
+    qml/components/RouteListViewDelegate.qml
 
 HEADERS += \
     src/databaseconnector.h \

@@ -12,7 +12,7 @@ Station::Station()
     same[0] = -1;
     same[1] = -1;
     same[2] = -1;
-    _action = "";
+    _action = -1;
     _direction = "";
 }
 
@@ -30,7 +30,7 @@ Station::Station(int n,int c,int s1,int s2,int s3,QString snum,QString sname,int
     same[2] = s3;
 }
 
-void Station::setactiondirection(QString a,QString d)
+void Station::setactiondirection(int a, QString d)
 {
     _action = a;
     _direction = d;
@@ -76,7 +76,7 @@ int Station::samestations(int i) const
     return same[i-1];
 }
 
-QString Station::action() const
+int Station::action() const
 {
     return _action;
 }

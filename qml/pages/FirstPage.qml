@@ -28,11 +28,12 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick 2.0
+import QtQuick 2.2
 import Sailfish.Silica 1.0
 import untitled1.dbc 1.0
 import untitled1.stationmodel 1.0
 import ".."
+import "../components"
 
 
 Page {
@@ -74,6 +75,7 @@ Page {
             id: column
             width: page.width
             spacing: Theme.paddingMedium
+            //bottomPadding: spacing
             PageHeader {
                 id: header
                 title: qsTr("Show Page 2")
@@ -127,11 +129,13 @@ Page {
                 }
             }
 
-            SilicaListView {
+            ListView {
                 id: listview
                 width: parent.width
-                height: page.height - header.height - row.height - button.height - column.spacing*3
-                clip: true
+                //height: page.height - header.height - row.height - button.height - column.spacing*3
+                height: contentItem.height
+                //clip: true
+                visible: count < 150
 
                 model: stationmodel/*ListModel {
                     id: listmodel
@@ -154,42 +158,35 @@ Page {
                     }
                 }*/
 
-                delegate: BackgroundItem {
-                    Label {
-                        id: namelabel
-                        anchors {
-                            verticalCenter: parent.verticalCenter
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenterOffset: actionlabel.visible ?
-                                                      -namelabel.height / 2 :
-                                                      0
+                delegate: /*BackgroundItem {
+                    id: listitem
+                    Column {
+                        width: column.width
+                        anchors.centerIn: parent
+                        Label {
+                            id: namelabel
+                            anchors {
+                                horizontalCenter: parent.horizontalCenter
+                            }
+                            text: station_number + " " + station_name
                         }
-                        //text: station_number + " " + station_name + " " + action + " " + line_name + " " + direction + "方向列车"
-                        text: station_number + " " + station_name/*{
-                            if(action === "" && direction ==="")
-                                station_number + station_name
-                            else if(action !== "" && direction === "")
-                                station_number + station_name + action
-                            else
-                                station_number + station_name + action + line_name + direction + "方向"
-                        }*/
-                    }
-                    Label {
-                        id: actionlabel
-                        anchors {
-                            verticalCenter: parent.verticalCenter
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenterOffset: namelabel.height / 2
+                        Label {
+                            id: actionlabel
+                            anchors {
+                                horizontalCenter: parent.horizontalCenter
+                            }
+                            visible: !(action === "" && direction ==="")
+                            text: {
+                                if(action !== "" && direction === "")
+                                    action
+                                else
+                                    action + line_name + direction + "方向列车"
+                            }
                         }
-                        enabled: !(action === "" && direction ==="")
-                        visible: !(action === "" && direction ==="")
-                        text: {
-                            if(action !== "" && direction === "")
-                                action
-                            else
-                                action + line_name + direction + "方向列车"
-                        }
-                    }
+                    }*/
+                          RouteListViewDelegate {
+                    last_index: listview.count - 1
+
                     onClicked: console.log("click")
                 }
             }

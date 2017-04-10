@@ -13,6 +13,7 @@ class StationModel : public QAbstractListModel
     Q_OBJECT
     Q_ENUMS(StationRoles)
     Q_ENUMS(LoadStatus)
+    Q_ENUMS(Action)
 public:
     enum StationRoles {
         NumRole = Qt::UserRole + 1,
@@ -31,6 +32,15 @@ public:
         Null,
         Ready,
         Error
+    };
+    enum Action {
+        OnTrain,
+        Depart,
+        Arrive,
+        GetOffTransfer,
+        Exit,
+        Transfer,
+        ExitTransfer
     };
 
     StationModel(QObject *parent = 0);
