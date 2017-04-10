@@ -76,9 +76,7 @@ Page {
             spacing: Theme.paddingMedium
             PageHeader {
                 id: header
-                title: load_status === StationModel.Null ?
-                           qsTr("正在加载") :
-                           qsTr("Show Page 2")
+                title: qsTr("Show Page 2")
             }
 
             Row {
@@ -122,6 +120,7 @@ Page {
                 text: "出发"
                 onClicked: {
                     console.log(sourcebutton.source+">"+destinationbutton.destination)
+                    stationmodel.getfulllistdata()
                     stationmodel.search(sourcebutton.source,destinationbutton.destination)
                     //listmodel.update()
                     stationmodel.getroutelistdata()
@@ -131,7 +130,7 @@ Page {
             SilicaListView {
                 id: listview
                 width: parent.width
-                height: page.height - header.height - row.height - column.spacing*2
+                height: page.height - header.height - row.height - button.height - column.spacing*3
                 clip: true
 
                 model: stationmodel/*ListModel {
@@ -156,48 +155,40 @@ Page {
                 }*/
 
                 delegate: BackgroundItem {
-                    Column {
-                        width: parent.width
-                        Label {
-                            anchors {
-                                //verticalCenter: parent.verticalCenter
-                                horizontalCenter: parent.horizontalCenter
-                            }
-                            //text: station_number + " " + station_name + " " + action + " " + line_name + " " + direction + "方向列车"
-                            text: station_number + " " + station_name/*{
-                                if(action === "" && direction ==="")
-                                    station_number + station_name
-                                else if(action !== "" && direction === "")
-                                    station_number + station_name + action
-                                else
-                                    station_number + station_name + action + line_name + direction + "方向"
-                            }*/
+                    Label {
+                        id: namelabel
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                            verticalCenterOffset: actionlabel.visible ?
+                                                      -namelabel.height / 2 :
+                                                      0
                         }
-                        Label {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            enabled: !(action === "" && direction ==="")
-                            visible: !(action === "" && direction ==="")
-                            text: {
-                                if(action !== "" && direction === "")
-                                    action
-                                else
-                                    action + line_name + direction + "方向列车"
-                            }
-                        }
-                        /*Component {
-                            Loader {
-                                sourceComponent: Component {
-                                    Label {
-                                        text: {
-                                            if(action !== "" && direction === "")
-                                                action
-                                            else
-                                                action + line_name + direction + "方向列车"
-                                        }
-                                    }
-                                }
-                            }
+                        //text: station_number + " " + station_name + " " + action + " " + line_name + " " + direction + "方向列车"
+                        text: station_number + " " + station_name/*{
+                            if(action === "" && direction ==="")
+                                station_number + station_name
+                            else if(action !== "" && direction === "")
+                                station_number + station_name + action
+                            else
+                                station_number + station_name + action + line_name + direction + "方向"
                         }*/
+                    }
+                    Label {
+                        id: actionlabel
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                            verticalCenterOffset: namelabel.height / 2
+                        }
+                        enabled: !(action === "" && direction ==="")
+                        visible: !(action === "" && direction ==="")
+                        text: {
+                            if(action !== "" && direction === "")
+                                action
+                            else
+                                action + line_name + direction + "方向列车"
+                        }
                     }
                     onClicked: console.log("click")
                 }

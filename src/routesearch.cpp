@@ -257,6 +257,7 @@ void RouteSearch::getresult(QList<int>* routestationlist, const QList<Station> &
     route.push(prev);
     //qDebug() << "first loop";
 
+    qDebug() << "while(!route.isEmpty())";
     while(!route.isEmpty())
     {
         station_number_temp = route.pop();

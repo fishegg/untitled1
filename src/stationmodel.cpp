@@ -207,6 +207,12 @@ int StationModel::getroutelistdata()
         int route_station_count = routestationlistrowcount();
         int i = 0;
 
+        qDebug() << "while(!routestationlist.isEmpty())";
+        qDebug() << "routestationlist.size() = " << routestationlistrowcount();
+        if(routestationlistrowcount() == 1)
+        {
+            return Error;
+        }
         while(!routestationlist.isEmpty())
         {
             i++;
