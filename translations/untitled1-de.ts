@@ -2,10 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>CoverPage</name>
+    <name>CoverListViewDelegate</name>
     <message>
-        <source>My Cover</source>
-        <translation>Mein Cover</translation>
+        <source>到达</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2方向</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -22,15 +26,11 @@
 <context>
     <name>RouteListViewDelegate</name>
     <message>
-        <source>乘坐 %1 往%2方向 列车</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>下车</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>换乘 %1 往%2方向 列车</source>
+        <source>换乘 %1 %2方向 列车</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -38,11 +38,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1入闸，换乘 %2 往%3方向 列车</source>
+        <source>下车，到达</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>下车，到达</source>
+        <source>在 %1入闸处 入闸&lt;br&gt;乘坐 %2 %3方向 列车</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>在 %1入闸处 入闸&lt;br&gt;换乘 %2 %3方向 列车</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

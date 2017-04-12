@@ -32,19 +32,20 @@ import QtQuick 2.2
 import Sailfish.Silica 1.0
 import untitled1.dbc 1.0
 import untitled1.stationmodel 1.0
-import ".."
+//import ".."
 import "../components"
+//import "../cover"
 
 
 Page {
     id: page
 
     Component.onCompleted: {
-        console.log("count"+stationmodel.rowCount())
+        //console.log("count"+stationmodel.rowCount())
         //load_status = stationmodel.getdata()
     }
 
-    Timer {
+    /*Timer {
         interval: 1
         //running: true
         onTriggered: {
@@ -52,7 +53,7 @@ Page {
             //appwindow.load_status = stationmodel.getmapdata()
             stop()
         }
-    }
+    }*/
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
@@ -64,10 +65,20 @@ Page {
                 text: qsTr("Show Page 2")
                 onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
             }
+            MenuItem {
+                text: "查询"
+                onClicked: {
+                    //console.log(sourcebutton.source+">"+destinationbutton.destination)
+                    //stationmodel.getfulllistdata()
+                    stationmodel.search(sourcebutton.source,destinationbutton.destination)
+                    //listmodel.update()
+                    stationmodel.getroutelistdata()
+                }
+            }
         }
 
         // Tell SilicaFlickable the height of its content.
-        contentHeight: column.height
+        contentHeight: column.height + column.spacing
 
         // Place our content in a Column.  The PageHeader is always placed at the top
         // of the page, followed by our content.
@@ -86,15 +97,15 @@ Page {
                 ValueButton {
                     id: sourcebutton
                     width: column.width / 2
-                    label: "起点"
+                    label: "出发站"
                     value: "选择"
                     onClicked: openlistdialog()
                     property int source: 0
                     function openlistdialog() {
-                        stationmodel.getfulllistdata()
+                        //stationmodel.getfulllistdata()
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
-                            value = dialog.selected_station
+                            value = dialog.selected_station_number + " " + dialog.selected_station_name
                             source = dialog.selected_number
                         })
                     }
@@ -102,42 +113,45 @@ Page {
                 ValueButton {
                     id: destinationbutton
                     width: column.width / 2
-                    label: "终点"
+                    label: "目的站"
                     value: "选择"
                     onClicked: openlistdialog()
                     property int destination: 1
                     function openlistdialog() {
-                        stationmodel.getfulllistdata()
+                        //stationmodel.getfulllistdata()
                         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
                         dialog.accepted.connect(function() {
-                            value = dialog.selected_station
+                            value = dialog.selected_station_number + " " + dialog.selected_station_name
                             destination = dialog.selected_number
+                            stationmodel.search(sourcebutton.source,destinationbutton.destination)
+                            stationmodel.getroutelistdata()
                         })
                     }
                 }
             }
 
-            Button {
+            /*Button {
                 id: button
                 text: "出发"
                 onClicked: {
                     console.log(sourcebutton.source+">"+destinationbutton.destination)
-                    stationmodel.getfulllistdata()
+                    //stationmodel.getfulllistdata()
                     stationmodel.search(sourcebutton.source,destinationbutton.destination)
                     //listmodel.update()
                     stationmodel.getroutelistdata()
                 }
-            }
+            }*/
 
-            ListView {
+            SilicaListView {
                 id: listview
                 width: parent.width
                 //height: page.height - header.height - row.height - button.height - column.spacing*3
                 height: contentItem.height
                 //clip: true
-                visible: count < 150
+                //visible: count < 150
 
-                model: stationmodel/*ListModel {
+                model: stationmodel
+                /*ListModel {
                     id: listmodel
 
                     function update() {
@@ -158,7 +172,10 @@ Page {
                     }
                 }*/
 
-                delegate: /*BackgroundItem {
+                delegate: RouteListViewDelegate {
+                    onClicked: console.log("click")
+                }
+                /*BackgroundItem {
                     id: listitem
                     Column {
                         width: column.width
@@ -184,13 +201,11 @@ Page {
                             }
                         }
                     }*/
-                          RouteListViewDelegate {
-                    last_index: listview.count - 1
 
-                    onClicked: console.log("click")
-                }
             }
         }
+
+        VerticalScrollDecorator {}
     }
 }
 

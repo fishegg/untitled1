@@ -30,15 +30,65 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import untitled1.stationmodel 1.0
+import "../components"
 
 CoverBackground {
-    Label {
+    //Component.onCompleted: coverlistmodel.update()
+    /*Label {
         id: label
         anchors.centerIn: parent
         text: qsTr("My Cover")
+    }*/
+
+    ListView {
+        id: coverlistview
+        anchors.centerIn: parent
+        width: parent.width - Theme.paddingMedium * 2
+        height: parent.height - Theme.paddingMedium * 2
+        //anchors.fill: parent
+
+        /*Rectangle {
+            anchors.centerIn: parent
+            width: coverlistview.width
+            height: coverlistview.height
+            color: "white"
+        }*/
+
+        model: ListModel {
+            id: coverlistmodel
+            function update() {
+                console.log("count"+stationmodel.rowCount())
+                clear()
+                var previous_append = -1
+                for (var i=0; i<stationmodel.rowCount(); i++) {
+                    if(stationmodel.data(i,StationModel.ActionRole) === StationModel.Depart ||
+                            stationmodel.data(i,StationModel.ActionRole) === StationModel.Transfer ||
+                            stationmodel.data(i,StationModel.ActionRole) === StationModel.ExitTransfer ||
+                            stationmodel.data(i,StationModel.ActionRole) === StationModel.Arrive)
+                    {
+                        var count = (i === stationmodel.rowCount() - 1 ?
+                                         i - previous_append :
+                                         i - previous_append - 1)
+                        previous_append = i
+                        append({//"number": stationmodel.data(i,StationModel.NumRole),
+                                   "station_name": stationmodel.data(i,StationModel.StnNameRole),
+                                   //"station_number": stationmodel.data(i,StationModel.StnNumRole),
+                                   "line_name": stationmodel.data(i,StationModel.LineRole),
+                                   "line_colour": stationmodel.data(i,StationModel.LineColourRole),
+                                   "towards": stationmodel.data(i,StationModel.TowardsRole),
+                                   "action": stationmodel.data(i,StationModel.ActionRole),
+                                   "count": count
+                               })
+                    }
+                }
+            }
+        }
+
+        delegate: CoverListViewDelegate { }
     }
 
-    CoverActionList {
+    /*CoverActionList {
         id: coverAction
 
         CoverAction {
@@ -48,7 +98,9 @@ CoverBackground {
         CoverAction {
             iconSource: "image://theme/icon-cover-pause"
         }
-    }
+    }*/
+
+    onStatusChanged: coverlistmodel.update()
 }
 
 

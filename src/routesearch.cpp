@@ -21,13 +21,17 @@ RouteSearch::RouteSearch(int numvert)
 RouteSearch::~RouteSearch(){
     //cout<<"~Route_search"<<endl;
     delete [] Distance;
-    Distance = NULL;
+    //qDebug() << "delete Distance";
+    Distance = nullptr;
     delete [] Distance_temp;
-    Distance_temp = NULL;
+    //qDebug() << "delete Distance temp";
+    Distance_temp = nullptr;
     delete [] From;
-    From = NULL;
+    //qDebug() << "delete From";
+    From = nullptr;
     delete [] From_temp;
-    From_temp = NULL;
+    //qDebug() << "delete From temp";
+    From_temp = nullptr;
 }
 
 void RouteSearch::cleararray(bool temp_array)
@@ -46,37 +50,37 @@ void RouteSearch::cleararray(bool temp_array)
     }
 }
 
-void RouteSearch::getallnumber(int s, int d, const QList<Station> &stationlist, int station_index[]){
+void RouteSearch::getallnumber(int s, int d, const QList<Station> &fullstationlist, const QVector<int> station_index){
     //cout<<"conv"<<endl;
     int i;
     //bool source_done = false, destination_done = false;//记录起点终点转换好没有
     Station station_temp;
 
-    qDebug()<<"station index"<<station_index[s];
-    station_temp = stationlist.at(station_index[s]);
-    for(i=0; i<station_temp.linescount(); i++){//看看这个站有多少条线
+    //qDebug()<<"station index"<<station_index[s];
+    station_temp = fullstationlist.at(station_index.at(s));
+    for(i=0; i<station_temp.linecount(); i++){//看看这个站有多少条线
         switch(i){
         case 0:
             source_list.enqueue(station_temp.number());//记录起点编号
-            qDebug() << "source" << i << source_list.at(i);
+            //qDebug() << "source" << i << source_list.at(i);
             break;
         default:
-            source_list.enqueue(station_temp.samestations(i));//保存另外的线路对于那个站的编号
-            qDebug() << "source" << i << source_list.at(i);
+            source_list.enqueue(station_temp.interchangeat(i));//保存另外的线路对于那个站的编号
+            //qDebug() << "source" << i << source_list.at(i);
             break;
         }
     }
 
-    station_temp = stationlist.at(station_index[d]);
-    for(i=0; i<station_temp.linescount(); i++){//看看这个站有多少条线
+    station_temp = fullstationlist.at(station_index.at(d));
+    for(i=0; i<station_temp.linecount(); i++){//看看这个站有多少条线
         switch(i){
         case 0:
             destination_list.enqueue(station_temp.number());//记录终点编号
-            qDebug() << "destination" << i << destination_list.at(i);
+            //qDebug() << "destination" << i << destination_list.at(i);
             break;
         default:
-            destination_list.enqueue(station_temp.samestations(i));//保存另外的线路对于那个站的编号
-            qDebug() << "destination" << i << destination_list.at(i);
+            destination_list.enqueue(station_temp.interchangeat(i));//保存另外的线路对于那个站的编号
+            //qDebug() << "destination" << i << destination_list.at(i);
             break;
         }
     }
@@ -124,8 +128,8 @@ void RouteSearch::dijkstra(Graphm *G, int s, bool use_temp_array){
     //qDebug()<<"finished";
 }
 
-void RouteSearch::search(Graphm* G, const QList<Station> &stationlist, int station_index[], int s, int d){
-    getallnumber(s,d,stationlist,station_index);
+void RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d){
+    getallnumber(s,d,fullstationlist,station_index);
 
     if(source_list.size() == 0 && destination_list.size() == 0){
         //cout<<"source1="<<source<<endl;
@@ -155,7 +159,7 @@ void RouteSearch::search(Graphm* G, const QList<Station> &stationlist, int stati
             dijkstra(G, source_temp, true);
             if(Distance[destination] > Distance_temp[destination]){//如果这条线比较近
                 source = source_temp;
-                for(j=0; j<stationlist.size(); j++){
+                for(j=0; j<fullstationlist.size(); j++){
                     Distance[j] = Distance_temp[j];
                     From[j] = From_temp[j];
                 }
@@ -181,7 +185,7 @@ void RouteSearch::search(Graphm* G, const QList<Station> &stationlist, int stati
             dijkstra(G, source, true);
             if(Distance[destination] > Distance_temp[destination_temp]){
                 destination = destination_temp;
-                for(j=0; j<stationlist.size(); j++){
+                for(j=0; j<fullstationlist.size(); j++){
                     Distance[j] = Distance_temp[j];
                     From[j] = From_temp[j];
                 }
@@ -215,7 +219,7 @@ void RouteSearch::search(Graphm* G, const QList<Station> &stationlist, int stati
                 if(Distance[destination] > Distance_temp[destination_temp]){
                     source = source_temp;
                     destination = destination_temp;
-                    for(k=0; k<stationlist.size(); k++){
+                    for(k=0; k<fullstationlist.size(); k++){
                         Distance[k] = Distance_temp[k];
                         From[k] = From_temp[k];
                     }
@@ -231,13 +235,13 @@ void RouteSearch::search(Graphm* G, const QList<Station> &stationlist, int stati
     //qDebug() << "search finish";
 }
 
-void RouteSearch::getresult(QList<int>* routestationlist, const QList<Station> &stationlist)
+void RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station> &fullstationlist)
 {
     qDebug() << "getresult start";
     QStack<int> route;
-    Station station_temp;
+    //Station station_temp;
     int station_number_temp;
-    int i;
+    //int i;
     int prev = destination;
     int station_via_count = 0;
     routestationlist->clear();
@@ -255,20 +259,21 @@ void RouteSearch::getresult(QList<int>* routestationlist, const QList<Station> &
     }while(prev != source);
     station_via_count++;
     route.push(prev);
-    //qDebug() << "first loop";
+    qDebug() << "first loop";
 
-    qDebug() << "while(!route.isEmpty())";
+    //qDebug() << "while(!route.isEmpty())";
     while(!route.isEmpty())
     {
         station_number_temp = route.pop();
         //station_temp = stationlist.at(station_number_temp);
         routestationlist->append(station_number_temp);
     }
-    //qDebug() << "second loop";
+    qDebug() << "second loop";
 
     /*for (i = 0; i < routestationlist->size(); ++i) {
         station_temp = stationlist.at(i);
         qDebug() << station_temp.stationnumber();
     }*/
     //qDebug() << "third loop";
+    qDebug() << "get result finish";
 }

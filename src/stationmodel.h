@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QString>
+//#include <QVector>
 #include "station.h"
 #include "routesearch.h"
 
@@ -18,15 +19,19 @@ public:
     enum StationRoles {
         NumRole = Qt::UserRole + 1,
         CountRole,
-        Same1Role,
-        Same2Role,
-        Same3Role,
+        Interchange1Role,
+        Interchange2Role,
+        Interchange3Role,
+        UnpaidInterchange1Role,
+        UnpaidInterchange2Role,
+        UnpaidInterchange3Role,
         StnNumRole,
         StnNameRole,
         LineRole,
+        LineColourRole,
         InterchangeRole,
         ActionRole,
-        DirectionRole
+        TowardsRole
     };
     enum LoadStatus {
         Null,
@@ -37,7 +42,7 @@ public:
         OnTrain,
         Depart,
         Arrive,
-        GetOffTransfer,
+        GetOff,
         Exit,
         Transfer,
         ExitTransfer
@@ -51,16 +56,22 @@ public:
     void addstation(const Station &station);
     void resetmodel();
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    Q_INVOKABLE int fulllistrowcount() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant data(const int &row, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE QVariant fulllistdata(const int &row, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE QString line_colour_at(const int &row);
     Q_INVOKABLE void search(int s, int d);
     Q_INVOKABLE int routedata(const int &index) const;
-    Q_INVOKABLE int routestationlistrowcount() const;
+    Q_INVOKABLE int routelistrowcount() const;
 protected:
     QHash<int, QByteArray> roleNames() const;
 private:
     QList<Station> stationlist;
-    int* station_index;
+    QList<Station> fullstationlist;
+    //int* station_index;
+    //QList<int> station_index;
+    QVector<int> station_index;
     QList<int> routestationlist;
     Graphm systemmap;
     int station_count;

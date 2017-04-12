@@ -6,25 +6,28 @@
 class Station
 {
 private:
-    int num, count, same[3], line_id;
+    int num, count, interchange[3], line_id, unpaid_interchange[3];
     QString stn_num, stn_name, line_name;
-    bool interchange;
-    QString /*_action, */_direction;
+    bool is_interchange;
+    QString /*_action, */_towards;
+    QString line_colour;
     int _action;
 public:
     Station();
-    Station(int n,int c,int s1,int s2,int s3,QString snum,QString sname,int lid,QString lname,bool i);
-    void setactiondirection(int a,QString d);
+    Station(int n, int c, int i1, int i2, int i3, int ui1, int ui2, int ui3, QString snum, QString sname, int lid, QString lname, QString lcolour, bool i);
+    void setactiontowards(int a,QString t);
     int number() const;
     QString stationnumber() const;
     QString stationname() const;
     bool isinterchange() const;
-    int linescount() const;
+    int linecount() const;
     QString linename() const;
     int lineid() const;
-    int samestations(int i) const;
+    int interchangeat(int i) const;
+    int unpaidinterchangeat(int i) const;
     int action() const;
-    QString direction() const;
+    QString towards() const;
+    QString linecolour() const;
 };
 
 #endif // STATION_H

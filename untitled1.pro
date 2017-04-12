@@ -50,7 +50,8 @@ DISTFILES += \
     qml/TestModel.qml \
     testdata/test.sqlite \
     qml/pages/StationsListDialog.qml \
-    qml/components/RouteListViewDelegate.qml
+    qml/components/RouteListViewDelegate.qml \
+    qml/components/CoverListViewDelegate.qml
 
 HEADERS += \
     src/databaseconnector.h \

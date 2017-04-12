@@ -14,9 +14,11 @@ StationModel::StationModel(QObject *parent) : QAbstractListModel(parent)
         query.next();
         station_count = query.value("station_count").toInt();
         qDebug() << "station count" << station_count;
-        station_index = new int[station_count];
-        for(int i;i<station_count;i++)
-            station_index[i]=-1;
+
+        //station_index = new int[station_count];
+        //for(int i=0;i<station_count;i++)
+            //station_index[i]=-1;
+        station_index.fill(-1, station_count);
     }
     getfulllistdata();
     getmapdata();
@@ -25,8 +27,9 @@ StationModel::StationModel(QObject *parent) : QAbstractListModel(parent)
 StationModel::~StationModel()
 {
     db.close();
-    delete [] station_index;
-    station_index = nullptr;
+    //delete [] station_index;
+    //qDebug() << "delete station index";
+    //station_index = nullptr;
 }
 
 int StationModel::getfulllistdata()
@@ -34,16 +37,16 @@ int StationModel::getfulllistdata()
     //int i;//, j;
     if(db.open())
     {
-        qDebug() << "connection opened" << endl;
-        int number = 0, lines_count, same_station[3], line_id;
-        QString station_name, station_number, line_name;
+        //qDebug() << "connection opened" << endl;
+        int number = 0, line_count, interchange[3], line_id, unpaid_interchange[3];
+        QString station_name, station_number, line_name, line_colour;
         //QString serial_distance;
-        bool interchange, in_use;
+        bool is_interchange, in_use;
 
         /*beginResetModel();
         stationlist.clear();
         endResetModel();*/
-        resetmodel();
+        //resetmodel();
 
         QSqlQuery query("SELECT * FROM test");
         QSqlQuery queryline;
@@ -55,21 +58,28 @@ int StationModel::getfulllistdata()
                 station_number = query.value("station_no_").toString();
                 number = query.value("no_").toInt();
                 station_name = query.value("station_name").toString();
-                interchange = query.value("interchange").toBool();
-                lines_count = query.value("lines_count").toInt();
+                is_interchange = query.value("is_interchange").toBool();
+                line_count = query.value("line_count").toInt();
                 line_id = query.value("line_id").toInt();
-                same_station[0] = query.value("same_no_1").toInt();
-                same_station[1] = query.value("same_no_2").toInt();
-                same_station[2] = query.value("same_no_3").toInt();
+                interchange[0] = query.value("interchange_1").toInt();
+                interchange[1] = query.value("interchange_2").toInt();
+                interchange[2] = query.value("interchange_3").toInt();
+                unpaid_interchange[0] = query.value("unpaid_interchange_1").toInt();
+                unpaid_interchange[1] = query.value("unpaid_interchange_2").toInt();
+                unpaid_interchange[2] = query.value("unpaid_interchange_3").toInt();
+
                 queryline.clear();
-                queryline.prepare("SELECT * FROM testline WHERE id=:id");
-                queryline.bindValue(":id",line_id);
+                queryline.prepare("SELECT * FROM testline WHERE line_id=:line_id");
+                queryline.bindValue(":line_id",line_id);
                 queryline.exec();
                 queryline.first();
                 line_name = queryline.value("line_name_zh").toString();
-                Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_id,line_name,interchange);
-                addstation(station);
-                station_index[number] = stationlist.size() - 1;
+                line_colour = queryline.value("line_colour").toString();
+
+                Station station(number,line_count,interchange[0],interchange[1],interchange[2],unpaid_interchange[0],unpaid_interchange[1],unpaid_interchange[2],station_number,station_name,line_id,line_name,line_colour,is_interchange);
+                //addstation(station);
+                fullstationlist << station;
+                station_index[number] = fullstationlist.size() - 1;
             }
             /**/
             //Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_name,interchange);
@@ -107,6 +117,7 @@ int StationModel::getfulllistdata()
         //}while(query.next());
         //systemmap.qdebugwholegraph();
         qDebug() << "get full list data finished";
+        return Ready;
     }
     else
     {
@@ -114,7 +125,6 @@ int StationModel::getfulllistdata()
         return Error;
     }
     //db.close();
-    return Ready;
 }
 
 int StationModel::getmapdata()
@@ -122,7 +132,7 @@ int StationModel::getmapdata()
     int i;//, j;
     if(db.open())
     {
-        qDebug() << "connection opened";
+        //qDebug() << "connection opened";
         qDebug() << "station count" << station_count;
 
         if(station_count == 0)
@@ -174,6 +184,7 @@ int StationModel::getmapdata()
         }while(query.next());*/
         //systemmap.qdebugwholegraph();
         qDebug() << "get map data finished";
+        return Ready;
     }
     else
     {
@@ -181,7 +192,6 @@ int StationModel::getmapdata()
         return Error;
     }
     //db.close();
-    return Ready;
 }
 
 int StationModel::getroutelistdata()
@@ -189,28 +199,28 @@ int StationModel::getroutelistdata()
     //int i;//, j;
     if(db.open())
     {
-        qDebug() << "connection opened" << endl;
-        int number = 0, lines_count, same_station[3], line_id;
-        QString station_name, station_number, line_name;
-        bool interchange;
-        QString /*action(""), */direction("");
+        //qDebug() << "connection opened" << endl;
+        int number = 0, line_count, interchange[3], line_id, unpaid_interchange[3];
+        QString station_name, station_number, line_name, line_colour;
+        bool is_interchange;
+        QString /*action(""), */towards("");
         int action = OnTrain;
         int number_temp = 0;
         QSqlQuery query;
         QSqlQuery queryline;
-        bool transfer = false;
+        int transfer_type = -1;
 
         /*beginResetModel();
         stationlist.clear();
         endResetModel();*/
         resetmodel();
 
-        int route_station_count = routestationlistrowcount();
+        int route_station_count = routelistrowcount();
         int i = 0;
 
-        qDebug() << "while(!routestationlist.isEmpty())";
-        qDebug() << "routestationlist.size() = " << routestationlistrowcount();
-        if(routestationlistrowcount() == 1)
+        //qDebug() << "while(!routestationlist.isEmpty())";
+        //qDebug() << "routestationlist.size() = " << routestationlistrowcount();
+        if(routelistrowcount() == 1)
         {
             return Error;
         }
@@ -227,41 +237,47 @@ int StationModel::getroutelistdata()
             station_number = query.value("station_no_").toString();
             number = query.value("no_").toInt();
             station_name = query.value("station_name").toString();
-            interchange = query.value("interchange").toBool();
-            lines_count = query.value("lines_count").toInt();
+            is_interchange = query.value("is_interchange").toBool();
+            line_count = query.value("line_count").toInt();
             line_id = query.value("line_id").toInt();
-            same_station[0] = query.value("same_no_1").toInt();
-            same_station[1] = query.value("same_no_2").toInt();
-            same_station[2] = query.value("same_no_3").toInt();
+            interchange[0] = query.value("interchange_1").toInt();
+            interchange[1] = query.value("interchange_2").toInt();
+            interchange[2] = query.value("interchange_3").toInt();
+            unpaid_interchange[0] = query.value("unpaid_interchange_1").toInt();
+            unpaid_interchange[1] = query.value("unpaid_interchange_2").toInt();
+            unpaid_interchange[2] = query.value("unpaid_interchange_3").toInt();
+
             queryline.clear();
-            queryline.prepare("SELECT * FROM testline WHERE id=:id");
-            queryline.bindValue(":id",line_id);
+            queryline.prepare("SELECT * FROM testline WHERE line_id=:line_id");
+            queryline.bindValue(":line_id",line_id);
             queryline.exec();
             queryline.first();
             line_name = queryline.value("line_name_zh").toString();
+            line_colour = queryline.value("line_colour").toString();
+
             if(i == 1)
             {
                 action = Depart;
                 number_temp = routestationlist.constFirst();
                 if(number_temp > number)
                 {
-                    number_temp = queryline.value("toward_large").toInt();
+                    number_temp = queryline.value("towards_large").toInt();
                     query.clear();
                     query.prepare("SELECT station_name FROM test WHERE no_=:number");
                     query.bindValue(":number",number_temp);
                     query.exec();
                     query.first();
-                    direction = query.value("station_name").toString();
+                    towards = query.value("station_name").toString();
                 }
                 else
                 {
-                    number_temp = queryline.value("toward_little").toInt();
+                    number_temp = queryline.value("towards_little").toInt();
                     query.clear();
                     query.prepare("SELECT station_name FROM test WHERE no_=:number");
                     query.bindValue(":number",number_temp);
                     query.exec();
                     query.first();
-                    direction = query.value("station_name").toString();
+                    towards = query.value("station_name").toString();
                 }
                 //direction = "方向";
             }
@@ -269,95 +285,96 @@ int StationModel::getroutelistdata()
             {
                 action = Arrive;
             }
-            else if(transfer)
+            else if(transfer_type == Transfer)
             {
                 action = Transfer;
                 number_temp = routestationlist.constFirst();
                 if(number_temp > number)
                 {
-                    number_temp = queryline.value("toward_large").toInt();
+                    number_temp = queryline.value("towards_large").toInt();
                     query.clear();
                     query.prepare("SELECT station_name FROM test WHERE no_=:number");
                     query.bindValue(":number",number_temp);
                     query.exec();
                     query.first();
-                    direction = query.value("station_name").toString();
+                    towards = query.value("station_name").toString();
                 }
                 else
                 {
-                    number_temp = queryline.value("toward_little").toInt();
+                    number_temp = queryline.value("towards_little").toInt();
                     query.clear();
                     query.prepare("SELECT station_name FROM test WHERE no_=:number");
                     query.bindValue(":number",number_temp);
                     query.exec();
                     query.first();
-                    direction = query.value("station_name").toString();
+                    towards = query.value("station_name").toString();
                 }
                 //direction = "方向";
-                transfer = false;
+                transfer_type = -1;
             }
-            else if(interchange)
+            else if(transfer_type == ExitTransfer)
+            {
+                action = ExitTransfer;
+                number_temp = routestationlist.constFirst();
+                if(number_temp > number)
+                {
+                    number_temp = queryline.value("towards_large").toInt();
+                    query.clear();
+                    query.prepare("SELECT station_name FROM test WHERE no_=:number");
+                    query.bindValue(":number",number_temp);
+                    query.exec();
+                    query.first();
+                    towards = query.value("station_name").toString();
+                }
+                else
+                {
+                    number_temp = queryline.value("towards_little").toInt();
+                    query.clear();
+                    query.prepare("SELECT station_name FROM test WHERE no_=:number");
+                    query.bindValue(":number",number_temp);
+                    query.exec();
+                    query.first();
+                    towards = query.value("station_name").toString();
+                }
+                //direction = "方向";
+                transfer_type = -1;
+            }
+            else if(is_interchange)
             {
                 number_temp = routestationlist.constFirst();
-                if(same_station[0] == number_temp ||
-                        same_station[1] == number_temp ||
-                        same_station[2] == number_temp)
+                if(interchange[0] == number_temp ||
+                        interchange[1] == number_temp ||
+                        interchange[2] == number_temp)
                 {
-                    transfer = true;
-                    action = GetOffTransfer;
+                    transfer_type = Transfer;
+                    action = GetOff;
+                }
+                else if(unpaid_interchange[0] == number_temp ||
+                        unpaid_interchange[1] == number_temp ||
+                        unpaid_interchange[2] == number_temp)
+                {
+                    transfer_type = ExitTransfer;
+                    action = Exit;
                 }
             }
             else {
                 action = OnTrain;
             }
-            Station station(number,lines_count,same_station[0],same_station[1],same_station[2],station_number,station_name,line_id,line_name,interchange);
+            Station station(number,line_count,interchange[0],interchange[1],interchange[2],unpaid_interchange[0],unpaid_interchange[1],unpaid_interchange[2],station_number,station_name,line_id,line_name,line_colour,is_interchange);
             /*if(action != -1 || direction != "")
             {
                 station.setactiondirection(action,direction);
                 action = -1;
                 direction = "";
             }*/
-            station.setactiondirection(action,direction);
+            station.setactiontowards(action,towards);
             action = OnTrain;
-            direction = "";
+            towards = "";
             addstation(station);
         }
 
-        /*QString action, direction;
-        Station current_station, next_station;
-        QList<Station>::iterator itr;
-        int i;
-        for(itr = stationlist.begin(), i = 0; itr != stationlist.end() - 1; ++itr, ++i)
-        {
-            current_station = *itr;
-            next_station = *(itr+1);
-            qDebug() << "current" << current_station.stationnumber();
-            qDebug() << "next" << next_station.stationnumber();
-            if(itr == stationlist.begin())
-            {
-                current_station.setactiondirection("乘坐","方向");
-            }
-            else if(current_station.isinterchange())
-            {
-                if(current_station.stationname() == next_station.stationname())
-                {
-                    current_station.setactiondirection("下车","无");
-                    next_station.setactiondirection("换乘","方向");
-                }
-            }
-            else if(itr == stationlist.end() - 2)
-            {
-                next_station.setactiondirection("到达","无");
-            }
-            else
-            {
-                current_station.setactiondirection("","");
-                next_station.setactiondirection("","");
-            }
-            stationlist[i] = current_station;
-            stationlist[i+1] = next_station;
-        }*/
         qDebug() << "get route list data finished";
+        return Ready;
     }
     else
     {
@@ -365,7 +382,6 @@ int StationModel::getroutelistdata()
         return Error;
     }
     //db.close();
-    return Ready;
 }
 
 void StationModel::addstation(const Station &station)
@@ -388,6 +404,11 @@ int StationModel::rowCount(const QModelIndex &parent) const
     return stationlist.count();
 }
 
+int StationModel::fulllistrowcount() const
+{
+    return fullstationlist.count();
+}
+
 QVariant StationModel::data(const QModelIndex &index, int role) const
 {
     //qDebug() << "index.row" << index.row() << endl;
@@ -405,19 +426,31 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     }
     else if(role == CountRole)
     {
-        return station.linescount();
+        return station.linecount();
     }
-    else if(role == Same1Role)
+    else if(role == Interchange1Role)
     {
-        return station.samestations(1);
+        return station.interchangeat(1);
     }
-    else if(role == Same2Role)
+    else if(role == Interchange2Role)
     {
-        return station.samestations(2);
+        return station.interchangeat(2);
     }
-    else if(role == Same3Role)
+    else if(role == Interchange3Role)
     {
-        return station.samestations(3);
+        return station.interchangeat(3);
+    }
+    else if(role == UnpaidInterchange1Role)
+    {
+        return station.unpaidinterchangeat(1);
+    }
+    else if(role == UnpaidInterchange2Role)
+    {
+        return station.unpaidinterchangeat(2);
+    }
+    else if(role == UnpaidInterchange3Role)
+    {
+        return station.unpaidinterchangeat(3);
     }
     else if(role == StnNumRole)
     {
@@ -431,6 +464,10 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     {
         return station.linename();
     }
+    else if(role == LineColourRole)
+    {
+        return station.linecolour();
+    }
     else if(role == InterchangeRole)
     {
         return station.isinterchange();
@@ -439,9 +476,9 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     {
         return station.action();
     }
-    else if(role == DirectionRole)
+    else if(role == TowardsRole)
     {
-        return station.direction();
+        return station.towards();
     }
 
     return QVariant();
@@ -451,41 +488,112 @@ QVariant StationModel::data(const int &row, int role) const
 {
     if(row < 0 || row > stationlist.count())
     {
-        //qDebug() << "sigledata get failed" << endl;
         return QVariant();
     }
     QModelIndex index = createIndex(row,0);
+    return data(index,role);
+}
+
+QVariant StationModel::fulllistdata(const int &row, int role) const
+{
+    if(row < 0 || row > fullstationlist.count())
+    {
+        //qDebug() << "sigledata get failed" << endl;
+        return QVariant();
+    }
+    const Station &station = fullstationlist[row];
+    if(role == NumRole)
+    {
+        return station.number();
+    }
+    else if(role == CountRole)
+    {
+        return station.linecount();
+    }
+    else if(role == Interchange1Role)
+    {
+        return station.interchangeat(1);
+    }
+    else if(role == Interchange2Role)
+    {
+        return station.interchangeat(2);
+    }
+    else if(role == Interchange3Role)
+    {
+        return station.interchangeat(3);
+    }
+    else if(role == StnNumRole)
+    {
+        return station.stationnumber();
+    }
+    else if(role == StnNameRole)
+    {
+        return station.stationname();
+    }
+    else if(role == LineRole)
+    {
+        return station.linename();
+    }
+    else if(role == LineColourRole)
+    {
+        return station.linecolour();
+    }
+    else if(role == InterchangeRole)
+    {
+        return station.isinterchange();
+    }
+    else if(role == ActionRole)
+    {
+        return station.action();
+    }
+    else if(role == TowardsRole)
+    {
+        return station.towards();
+    }
+    //QModelIndex index = createIndex(row,0);
     //qDebug() << "singledata() role" << role << endl;
     //qDebug() << "singledata() index.row() = " << index.row() << " index.column() = " << index.column() << endl;
     //QVariant d = data(index,role);
     //qDebug() << "single data d = " << d.toString() << endl;
     //return d;
-    return data(index,role);
+    //return data(index,role);
+}
+
+QString StationModel::line_colour_at(const int &row)
+{
+    if(row < 0 || row > stationlist.count())
+    {
+        return QString();
+    }
+    QModelIndex index = createIndex(row,0);
+    QString colour = data(index,LineColourRole).toString();
+    return colour;
 }
 
 QHash<int, QByteArray> StationModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[NumRole] = "number";
-    roles[CountRole] = "lines_count";
-    roles[Same1Role] = "same_station_1";
-    roles[Same2Role] = "same_station_2";
-    roles[Same3Role] = "same_station_3";
+    roles[CountRole] = "line_count";
+    roles[Interchange1Role] = "interchange_1";
+    roles[Interchange2Role] = "interchange_2";
+    roles[Interchange3Role] = "interchange_3";
     roles[StnNumRole] = "station_number";
     roles[StnNameRole] = "station_name";
     //roles[LineRole] = "line_name";
     roles[LineRole] = "line_name";
+    roles[LineColourRole] = "line_colour";
     roles[InterchangeRole] = "is_interchange";
     roles[ActionRole] = "action";
-    roles[DirectionRole] = "direction";
+    roles[TowardsRole] = "towards";
     return roles;
 }
 
 void StationModel::search(int s, int d)
 {
     RouteSearch routesearch(station_count);
-    routesearch.search(systemmap_ptr,stationlist,station_index,s,d);
-    routesearch.getresult(routestationlist_ptr,stationlist);
+    routesearch.search(systemmap_ptr,fullstationlist,station_index,s,d);
+    routesearch.getresult(routestationlist_ptr);//,fullstationlist);
 }
 
 int StationModel::routedata(const int &index) const
@@ -493,7 +601,7 @@ int StationModel::routedata(const int &index) const
     return routestationlist.at(index);
 }
 
-int StationModel::routestationlistrowcount() const
+int StationModel::routelistrowcount() const
 {
     return routestationlist.count();
 }

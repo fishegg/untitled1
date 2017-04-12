@@ -6,34 +6,46 @@ Station::Station()
     count = 0;
     stn_name = "null";
     stn_num = "null";
-    interchange = false;
+    is_interchange = false;
     line_name = "null";
     line_id = 0;
-    same[0] = -1;
-    same[1] = -1;
-    same[2] = -1;
+    interchange[0] = -1;
+    interchange[1] = -1;
+    interchange[2] = -1;
+    unpaid_interchange[0] = -1;
+    unpaid_interchange[1] = -1;
+    unpaid_interchange[2] = -1;
     _action = -1;
-    _direction = "";
+    _towards = "";
+    //line_colour.setNamedColor("000000");
+    line_colour = "FFFFFF";
 }
 
-Station::Station(int n,int c,int s1,int s2,int s3,QString snum,QString sname,int lid,QString lname,bool i)
+Station::Station(int n, int c, int i1, int i2, int i3, int ui1, int ui2, int ui3, QString snum, QString sname, int lid, QString lname, QString lcolour, bool i)
 {
     num = n;
     count = c;
     stn_name = sname;
     stn_num = snum;
-    interchange = i;
+    is_interchange = i;
     line_name = lname;
     line_id = lid;
-    same[0] = s1;
-    same[1] = s2;
-    same[2] = s3;
+    interchange[0] = i1;
+    interchange[1] = i2;
+    interchange[2] = i3;
+    unpaid_interchange[0] = ui1;
+    unpaid_interchange[1] = ui2;
+    unpaid_interchange[2] = ui3;
+    _action = -1;
+    _towards = "";
+    //line_colour.setNamedColor(lcolour);
+    line_colour = lcolour;
 }
 
-void Station::setactiondirection(int a, QString d)
+void Station::setactiontowards(int a, QString t)
 {
     _action = a;
-    _direction = d;
+    _towards = t;
 }
 
 int Station::number() const
@@ -53,10 +65,10 @@ QString Station::stationname() const
 
 bool Station::isinterchange() const
 {
-    return interchange;
+    return is_interchange;
 }
 
-int Station::linescount() const
+int Station::linecount() const
 {
     return count;
 }
@@ -71,9 +83,14 @@ int Station::lineid() const
     return line_id;
 }
 
-int Station::samestations(int i) const
+int Station::interchangeat(int i) const
 {
-    return same[i-1];
+    return interchange[i-1];
+}
+
+int Station::unpaidinterchangeat(int i) const
+{
+    return unpaid_interchange[i-1];
 }
 
 int Station::action() const
@@ -81,7 +98,12 @@ int Station::action() const
     return _action;
 }
 
-QString Station::direction() const
+QString Station::towards() const
 {
-    return _direction;
+    return _towards;
+}
+
+QString Station::linecolour() const
+{
+    return line_colour;
 }
