@@ -100,7 +100,11 @@ CoverBackground {
         }
     }*/
 
-    onStatusChanged: coverlistmodel.update()
+    //onStatusChanged: coverlistmodel.update()
+    Connections {
+        target: stationmodel
+        onRowsInserted: coverlistmodel.update()
+    }
 }
 
 

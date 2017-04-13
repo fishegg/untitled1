@@ -45,6 +45,12 @@ Page {
         //load_status = stationmodel.getdata()
     }
 
+    //stationmodel.onDataChanged: console.log("data changed")
+    Connections {
+        target: stationmodel
+        onRowsInserted: console.log("data changed")
+    }
+
     /*Timer {
         interval: 1
         //running: true
