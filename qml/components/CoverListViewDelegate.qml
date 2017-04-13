@@ -25,7 +25,7 @@ Item {
             id: row
             height: column2.height
             width: parent.width
-            spacing: Theme.paddingMedium
+            spacing: Theme.paddingSmall
             //anchors.verticalCenter: parent.verticalCenter
             Rectangle {
                 id: line
@@ -44,7 +44,7 @@ Item {
                     id: namelabel
                     width: parent.width
                     color: Theme.highlightColor
-                    //font.pixelSize: Theme.fontSizeSmall
+                    font.pixelSize: Theme.fontSizeSmall
                     text: station_name
                 }
                 Label {
@@ -52,12 +52,12 @@ Item {
                     width: parent.width
                     wrapMode: Text.Wrap
                     //color: Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeTiny
+                    font.pixelSize: Theme.fontSizeExtraSmall
                     property string _line_name: line_name
                     property string _towards: towards
                     text: action === StationModel.Arrive ?
                               qsTr("到达") :
-                              qsTr("%1 %2方向").arg(_line_name).arg(_towards)
+                              qsTr("%1→%2").arg(_line_name).arg(_towards)
                     /*{
                         if(action == StationModel.Depart)
                             qsTr("乘坐 %1 往%2方向 列车").arg(line).arg(toward)

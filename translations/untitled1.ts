@@ -8,7 +8,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 %2方向</source>
+        <source>%1→%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

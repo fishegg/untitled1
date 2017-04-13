@@ -75,6 +75,18 @@ Page {
                     stationmodel.getroutelistdata()
                 }
             }
+            MenuItem {
+                text: "选择出发站"
+                onClicked: {
+                    sourcebutton.openlistdialog()
+                }
+            }
+            MenuItem {
+                text: "选择目的站"
+                onClicked: {
+                    destinationbutton.openlistdialog()
+                }
+            }
         }
 
         // Tell SilicaFlickable the height of its content.
