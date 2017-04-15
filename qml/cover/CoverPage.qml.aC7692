@@ -40,7 +40,6 @@ CoverBackground {
         anchors.centerIn: parent
         text: qsTr("My Cover")
     }*/
-    property int page: 1
 
     ListView {
         id: coverlistview
@@ -79,8 +78,7 @@ CoverBackground {
                                    "line_colour": stationmodel.data(i,StationModel.LineColourRole),
                                    "towards": stationmodel.data(i,StationModel.TowardsRole),
                                    "action": stationmodel.data(i,StationModel.ActionRole),
-                                   "count": count,
-                                   "original_index": i
+                                   "count": count
                                })
                     }
                 }
@@ -92,26 +90,17 @@ CoverBackground {
         }
     }
 
-    CoverActionList {
+    /*CoverActionList {
         id: coverAction
-        enabled: coverlistmodel.count > 4
 
         CoverAction {
-            iconSource: page === 1 ?
-                            "image://theme/icon-cover-next":
-                            "image://theme/icon-cover-previous"
-            onTriggered: {
-                if(page === 1) {
-                    page = 2
-                    coverlistview.positionViewAtEnd()
-                }
-                else if(page === 2) {
-                    page = 1
-                    coverlistview.positionViewAtBeginning()
-                }
-            }
+            iconSource: "image://theme/icon-cover-next"
         }
-    }
+
+        CoverAction {
+            iconSource: "image://theme/icon-cover-pause"
+        }
+    }*/
 
     //onStatusChanged: coverlistmodel.update()
     Connections {
@@ -120,13 +109,12 @@ CoverBackground {
             coverlistmodel.update()
             //coverlistview.height = coverlistview.height * 0.75
             //coverlistview.clip = true
-            console.log("content height="+coverlistview.contentItem.height+"height="+coverlistview.height)
-            if(coverlistmodel.count > 3) {
+            console.log("content height="+coverlistview.contentItem.width+"height="+coverlistview.height)
+            if(coverlistview.contentItem.height > coverlistview.height) {
+                console.log(clip)
                 //coverlistview.height = coverlistview.height * 0.75
                 coverlistview.clip = true
-            }
-            else {
-                coverlistview.clip = false
+                console.log(clip)
             }
         }
     }

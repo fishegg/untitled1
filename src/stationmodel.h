@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QString>
+#include <QSqlError>
 //#include <QVector>
 #include "station.h"
 #include "routesearch.h"
@@ -60,8 +61,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant data(const int &row, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant fulllistdata(const int &row, int role = Qt::DisplayRole) const;
-    Q_INVOKABLE QString line_colour_at(const int &row);
-    Q_INVOKABLE void search(int s, int d);
+    Q_INVOKABLE QString linecolourat(const int &row);
+    Q_INVOKABLE bool search(int s, int d);
     Q_INVOKABLE int routedata(const int &index) const;
     Q_INVOKABLE int routelistrowcount() const;
 protected:

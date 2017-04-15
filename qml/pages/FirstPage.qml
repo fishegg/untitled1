@@ -40,6 +40,29 @@ import "../components"
 Page {
     id: page
 
+    property int from: -1
+    property int to: -1
+    property int route_preference: 1
+
+    function openlistdialog() {
+        var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"),
+                                    {selected_from_number: from,
+                                    selected_to_number: to
+                                    })
+        dialog.accepted.connect(function() {
+            frombutton.value = dialog.selected_from_station_number + " " + dialog.selected_from_station_name
+            from = dialog.selected_from_number
+            tobutton.value = dialog.selected_to_station_number + " " + dialog.selected_to_station_name
+            to = dialog.selected_to_number
+            if(from !== -1 && to !== -1) {
+                stationmodel.search(from,to)
+                //stationmodel.getroutelistdata()
+                touchblocker.enabled = true
+                timer.start()
+            }
+        })
+    }
+
     Component.onCompleted: {
         //console.log("count"+stationmodel.rowCount())
         //load_status = stationmodel.getdata()
@@ -48,21 +71,25 @@ Page {
     //stationmodel.onDataChanged: console.log("data changed")
     Connections {
         target: stationmodel
-        onRowsInserted: console.log("data changed")
+        //onRowsInserted: console.log("data changed")
+        onRowsInserted: console.log("count"+stationmodel.rowCount())
     }
 
-    /*Timer {
-        interval: 1
+    Timer {
+        id: timer
+        interval: 600
         //running: true
         onTriggered: {
             //stationmodel.getfulllistdata()
             //appwindow.load_status = stationmodel.getmapdata()
-            stop()
+            stationmodel.getroutelistdata()
+            touchblocker.enabled = false
         }
-    }*/
+    }
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
+        id: flickable
         anchors.fill: parent
 
         // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
@@ -72,25 +99,60 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
             }
             MenuItem {
-                text: "查询"
+                text: "选择出发站及目的站"
                 onClicked: {
-                    //console.log(sourcebutton.source+">"+destinationbutton.destination)
-                    //stationmodel.getfulllistdata()
-                    stationmodel.search(sourcebutton.source,destinationbutton.destination)
-                    //listmodel.update()
-                    stationmodel.getroutelistdata()
+                    from = -1
+                    to = -1
+                    openlistdialog()
                 }
             }
             MenuItem {
-                text: "选择出发站"
+                visible: from !== -1 && to !== -1
+                //enabled: from !== -1 && to !== -1
+                text: "出发站↔目的站"
+                property var t
                 onClicked: {
-                    sourcebutton.openlistdialog()
+                    t = to
+                    to = from
+                    from = t
+                    t = tobutton.value
+                    tobutton.value = frombutton.value
+                    frombutton.value = t
+                    stationmodel.search(from,to)
+                    //stationmodel.getroutelistdata()
+                    touchblocker.enabled = true
+                    timer.start()
+                }
+            }
+        }
+
+        PushUpMenu {
+            MenuItem {
+                visible: from !== -1 && to !== -1
+                //enabled: from !== -1 && to !== -1
+                text: "出发站↔目的站"
+                property var t
+                onClicked: {
+                    t = to
+                    to = from
+                    from = t
+                    t = tobutton.value
+                    tobutton.value = frombutton.value
+                    frombutton.value = t
+                    flickable.scrollToTop()
+                    stationmodel.search(from,to)
+                    //stationmodel.getroutelistdata()
+                    touchblocker.enabled = true
+                    timer.start()
                 }
             }
             MenuItem {
-                text: "选择目的站"
+                text: "选择出发站及目的站"
                 onClicked: {
-                    destinationbutton.openlistdialog()
+                    from = -1
+                    to = -1
+                    openlistdialog()
+                    flickable.scrollToTop()
                 }
             }
         }
@@ -112,38 +174,25 @@ Page {
 
             Row {
                 id: row
+                width: parent.width
                 ValueButton {
-                    id: sourcebutton
-                    width: column.width / 2
+                    id: frombutton
+                    width: parent.width / 2
                     label: "出发站"
                     value: "选择"
-                    onClicked: openlistdialog()
-                    property int source: 0
-                    function openlistdialog() {
-                        //stationmodel.getfulllistdata()
-                        var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
-                        dialog.accepted.connect(function() {
-                            value = dialog.selected_station_number + " " + dialog.selected_station_name
-                            source = dialog.selected_number
-                        })
+                    onClicked: {
+                        from = -1
+                        openlistdialog()
                     }
                 }
                 ValueButton {
-                    id: destinationbutton
-                    width: column.width / 2
+                    id: tobutton
+                    width: parent.width / 2
                     label: "目的站"
                     value: "选择"
-                    onClicked: openlistdialog()
-                    property int destination: 1
-                    function openlistdialog() {
-                        //stationmodel.getfulllistdata()
-                        var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"))
-                        dialog.accepted.connect(function() {
-                            value = dialog.selected_station_number + " " + dialog.selected_station_name
-                            destination = dialog.selected_number
-                            stationmodel.search(sourcebutton.source,destinationbutton.destination)
-                            stationmodel.getroutelistdata()
-                        })
+                    onClicked: {
+                        to = -1
+                        openlistdialog()
                     }
                 }
             }
@@ -152,21 +201,96 @@ Page {
                 id: button
                 text: "出发"
                 onClicked: {
-                    console.log(sourcebutton.source+">"+destinationbutton.destination)
+                    console.log(frombutton.source+">"+tobutton.destination)
                     //stationmodel.getfulllistdata()
-                    stationmodel.search(sourcebutton.source,destinationbutton.destination)
+                    stationmodel.search(frombutton.source,tobutton.destination)
                     //listmodel.update()
                     stationmodel.getroutelistdata()
                 }
             }*/
 
-            SilicaListView {
+            Row {
+                //anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width// - Theme.horizontalPageMargins
+                //spacing: Theme.paddingSmall
+                height: Theme.itemSizeExtraSmall
+                BackgroundItem {
+                    id: type1button
+                    width: parent.width / 4
+                    highlighted: route_preference === 1
+                    Label {
+                        anchors.centerIn: parent
+                        text: "换乘方便"
+                    }
+                    onClicked: {
+                        route_preference = 1
+                        highlighted = route_preference === 1
+                        type2button.highlighted = false
+                        type3button.highlighted = false
+                        type4button.highlighted = false
+                    }
+                    /*onPressed: {
+                        highlighted = !highlighted
+                    }*/
+                }
+                BackgroundItem {
+                    id: type2button
+                    width: parent.width / 4
+                    highlighted: route_preference === 2
+                    Label {
+                        anchors.centerIn: parent
+                        text: "换乘少"
+                    }
+                    onClicked: {
+                        route_preference = 2
+                        highlighted = route_preference === 2
+                        type1button.highlighted = false
+                        type3button.highlighted = false
+                        type4button.highlighted = false
+                    }
+                }
+                BackgroundItem {
+                    id: type3button
+                    width: parent.width / 4
+                    highlighted: route_preference === 3
+                    Label {
+                        anchors.centerIn: parent
+                        text: "车程短"
+                    }
+                    onClicked: {
+                        route_preference = 3
+                        highlighted = route_preference === 3
+                        type1button.highlighted = false
+                        type2button.highlighted = false
+                        type4button.highlighted = false
+                    }
+                }
+                BackgroundItem {
+                    id: type4button
+                    width: parent.width / 4
+                    highlighted: route_preference === 4
+                    Label {
+                        anchors.centerIn: parent
+                        text: "平衡"
+                    }
+                    onClicked: {
+                        route_preference = 4
+                        highlighted = route_preference === 4
+                        type1button.highlighted = false
+                        type2button.highlighted = false
+                        type3button.highlighted = false
+                    }
+                }
+            }
+
+            ListView {
                 id: listview
                 width: parent.width
                 //height: page.height - header.height - row.height - button.height - column.spacing*3
                 height: contentItem.height
                 //clip: true
                 //visible: count < 150
+                boundsBehavior: Flickable.StopAtBounds
 
                 model: stationmodel
                 /*ListModel {
@@ -193,37 +317,33 @@ Page {
                 delegate: RouteListViewDelegate {
                     onClicked: console.log("click")
                 }
-                /*BackgroundItem {
-                    id: listitem
-                    Column {
-                        width: column.width
-                        anchors.centerIn: parent
-                        Label {
-                            id: namelabel
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                            }
-                            text: station_number + " " + station_name
-                        }
-                        Label {
-                            id: actionlabel
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                            }
-                            visible: !(action === "" && direction ==="")
-                            text: {
-                                if(action !== "" && direction === "")
-                                    action
-                                else
-                                    action + line_name + direction + "方向列车"
-                            }
-                        }
-                    }*/
 
+                ViewPlaceholder {
+                    enabled: listview.count === 0
+                    text: "下拉或者点击<br>选择出发站及目的站"
+                }
             }
         }
 
         VerticalScrollDecorator {}
+    }
+
+    TouchBlocker {
+        id: touchblocker
+        anchors.fill: parent
+        enabled: false
+
+        Rectangle {
+            visible: touchblocker.enabled
+            anchors.fill: parent
+            color: Theme.rgba(Theme.highlightDimmerColor, Theme.highlightBackgroundOpacity)
+        }
+
+        BusyIndicator {
+            anchors.centerIn: parent
+            running: touchblocker.enabled
+            size: BusyIndicatorSize.Large
+        }
     }
 }
 

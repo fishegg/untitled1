@@ -50,15 +50,15 @@ void RouteSearch::cleararray(bool temp_array)
     }
 }
 
-void RouteSearch::getallnumber(int s, int d, const QList<Station> &fullstationlist, const QVector<int> station_index){
+bool RouteSearch::getallnumber(int s, int d, const QList<Station> &fullstationlist, const QVector<int> station_index){
     //cout<<"conv"<<endl;
-    int i;
+    //int i;
     //bool source_done = false, destination_done = false;//记录起点终点转换好没有
     Station station_temp;
 
     //qDebug()<<"station index"<<station_index[s];
     station_temp = fullstationlist.at(station_index.at(s));
-    for(i=0; i<station_temp.linecount(); i++){//看看这个站有多少条线
+    /*for(i=0; i<station_temp.linecount(); i++){//看看这个站有多少条线
         switch(i){
         case 0:
             source_list.enqueue(station_temp.number());//记录起点编号
@@ -69,10 +69,28 @@ void RouteSearch::getallnumber(int s, int d, const QList<Station> &fullstationli
             //qDebug() << "source" << i << source_list.at(i);
             break;
         }
+    }*/
+    source_list.enqueue(station_temp.number());
+    if(station_temp.interchangeat(1) != -1)
+        source_list.enqueue(station_temp.interchangeat(1));
+    if(station_temp.interchangeat(2) != -1)
+        source_list.enqueue(station_temp.interchangeat(2));
+    if(station_temp.interchangeat(3) != -1)
+        source_list.enqueue(station_temp.interchangeat(3));
+    if(station_temp.unpaidinterchangeat(1) != -1)
+        source_list.enqueue(station_temp.unpaidinterchangeat(1));
+    if(station_temp.unpaidinterchangeat(2) != -1)
+        source_list.enqueue(station_temp.unpaidinterchangeat(2));
+    if(station_temp.unpaidinterchangeat(3) != -1)
+        source_list.enqueue(station_temp.unpaidinterchangeat(3));
+    if(source_list.size() != station_temp.linecount())
+    {
+        return false;
     }
 
+
     station_temp = fullstationlist.at(station_index.at(d));
-    for(i=0; i<station_temp.linecount(); i++){//看看这个站有多少条线
+    /*for(i=0; i<station_temp.linecount(); i++){//看看这个站有多少条线
         switch(i){
         case 0:
             destination_list.enqueue(station_temp.number());//记录终点编号
@@ -83,7 +101,26 @@ void RouteSearch::getallnumber(int s, int d, const QList<Station> &fullstationli
             //qDebug() << "destination" << i << destination_list.at(i);
             break;
         }
+    }*/
+    destination_list.enqueue(station_temp.number());
+    if(station_temp.interchangeat(1) != -1)
+        destination_list.enqueue(station_temp.interchangeat(1));
+    if(station_temp.interchangeat(2) != -1)
+        destination_list.enqueue(station_temp.interchangeat(2));
+    if(station_temp.interchangeat(3) != -1)
+        destination_list.enqueue(station_temp.interchangeat(3));
+    if(station_temp.unpaidinterchangeat(1) != -1)
+        destination_list.enqueue(station_temp.unpaidinterchangeat(1));
+    if(station_temp.unpaidinterchangeat(2) != -1)
+        destination_list.enqueue(station_temp.unpaidinterchangeat(2));
+    if(station_temp.unpaidinterchangeat(3) != -1)
+        destination_list.enqueue(station_temp.unpaidinterchangeat(3));
+    if(destination_list.size() != station_temp.linecount())
+    {
+        return false;
     }
+
+    return true;
 }
 
 void RouteSearch::dijkstra(Graphm *G, int s, bool use_temp_array){
@@ -128,10 +165,11 @@ void RouteSearch::dijkstra(Graphm *G, int s, bool use_temp_array){
     //qDebug()<<"finished";
 }
 
-void RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d){
-    getallnumber(s,d,fullstationlist,station_index);
+bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d){
+    if(!getallnumber(s,d,fullstationlist,station_index))
+        return false;
 
-    if(source_list.size() == 0 && destination_list.size() == 0){
+    if(source_list.size() == 1 && destination_list.size() == 1){
         //cout<<"source1="<<source<<endl;
         source = source_list.dequeue();
         destination = destination_list.dequeue();
@@ -140,7 +178,7 @@ void RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         dijkstra(G, source, false);
     }
 
-    else if(source_list.size() > 0 && destination_list.size() == 0){
+    else if(source_list.size() > 1 && destination_list.size() == 1){
         //cout<<"interchange source"<<endl;
         source = source_list.dequeue();
         destination = destination_list.dequeue();
@@ -167,7 +205,7 @@ void RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         }
     }
 
-    else if(source_list.size() == 0 && destination_list.size() > 0){
+    else if(source_list.size() == 1 && destination_list.size() > 1){
         //cout<<"intechange destination"<<endl;
         source = source_list.dequeue();
         destination = destination_list.dequeue();
@@ -193,7 +231,7 @@ void RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         }
     }
 
-    else if(source_list.size() > 0 && destination_list.size() > 0){
+    else if(source_list.size() > 1 && destination_list.size() > 1){
         //cout<<"both interchanges"<<endl;
         source = source_list.dequeue();
         destination = destination_list.dequeue();
@@ -233,9 +271,10 @@ void RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
     //qDebug() << "distance" << Distance[destination];
     //qDebug() << "From[destination]" << From[destination];
     //qDebug() << "search finish";
+    return true;
 }
 
-void RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station> &fullstationlist)
+bool RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station> &fullstationlist)
 {
     qDebug() << "getresult start";
     QStack<int> route;
@@ -259,7 +298,7 @@ void RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station
     }while(prev != source);
     station_via_count++;
     route.push(prev);
-    qDebug() << "first loop";
+    //qDebug() << "first loop";
 
     //qDebug() << "while(!route.isEmpty())";
     while(!route.isEmpty())
@@ -268,7 +307,7 @@ void RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station
         //station_temp = stationlist.at(station_number_temp);
         routestationlist->append(station_number_temp);
     }
-    qDebug() << "second loop";
+    //qDebug() << "second loop";
 
     /*for (i = 0; i < routestationlist->size(); ++i) {
         station_temp = stationlist.at(i);
@@ -276,4 +315,5 @@ void RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station
     }*/
     //qDebug() << "third loop";
     qDebug() << "get result finish";
+    return true;
 }

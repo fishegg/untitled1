@@ -71,10 +71,10 @@ ListItem {
                 radius: width / 2
                 color: (action === StationModel.GetOff ||
                         action === StationModel.Exit) ?
-                           Theme.rgba(stationmodel.line_colour_at(index + 1), 0.7) :
+                           Theme.rgba(stationmodel.linecolourat(index + 1), 0.7) :
                            ((action === StationModel.Transfer ||
                             action === StationModel.ExitTransfer) ?
-                                Theme.rgba(stationmodel.line_colour_at(index - 1), 0.7) :
+                                Theme.rgba(stationmodel.linecolourat(index - 1), 0.7) :
                                 Theme.secondaryColor)
             }
             Rectangle {
@@ -104,7 +104,13 @@ ListItem {
             Label {
                 id: namelabel
                 width: parent.width
-                //color: Theme.highlightColor
+                color: ((action !== StationModel.OnTrain &&
+                        action !== StationModel.GetOff &&
+                        action !== StationModel.Exit &&
+                        action !== StationModel.Arrive) ||
+                       root.highlighted) ?
+                           Theme.highlightColor:
+                           Theme.primaryColor
                 text: station_number + " " + station_name
             }
             Label {
@@ -112,20 +118,20 @@ ListItem {
                 width: parent.width
                 wrapMode: Text.Wrap
                 visible: action != StationModel.OnTrain
-                color: Theme.secondaryColor
+                color: !root.highlighted ?
+                           Theme.secondaryColor :
+                           Theme.secondaryHighlightColor
                 font.pixelSize: Theme.fontSizeSmall
-                property string _line_name: line_name
-                property string _towards: towards
                 text: action === StationModel.Depart ?
-                          qsTr("在 %1入闸处 入闸<br>乘坐 %2 %3方向 列车").arg(_line_name).arg(_line_name).arg(_towards) :
+                          qsTr("在 %1入闸处 入闸<br>乘坐 %2 %3方向 列车").arg(line_name).arg(line_name).arg(towards) :
                           (action === StationModel.GetOff ?
                                qsTr("下车") :
                                (action === StationModel.Transfer ?
-                                    qsTr("换乘 %1 %2方向 列车").arg(_line_name).arg(_towards) :
+                                    qsTr("换乘 %1 %2方向 列车").arg(line_name).arg(towards) :
                                     (action === StationModel.Exit ?
                                          qsTr("下车，出闸") :
                                          (action === StationModel.ExitTransfer ?
-                                              qsTr("在 %1入闸处 入闸<br>换乘 %2 %3方向 列车").arg(_line_name).arg(_line_name).arg(_towards) :
+                                              qsTr("在 %1入闸处 入闸<br>换乘 %2 %3方向 列车").arg(line_name).arg(line_name).arg(towards) :
                                               (action === StationModel.Arrive ?
                                                    qsTr("下车，到达") :
                                                    "")
@@ -151,10 +157,10 @@ ListItem {
         }
     }
 
-    menu: ContextMenu {
+    /*menu: ContextMenu {
         id: contextmenu
         MenuItem {
             text: "haha"
         }
-    }
+    }*/
 }

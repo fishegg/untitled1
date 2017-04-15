@@ -9,55 +9,94 @@ Item {
                        Theme.itemSizeSmall*/
     width: parent.width
     height: column1.height
+
+    property var previous_colour: stationmodel.linecolourat(original_index - 1)
     Column {
         id: column1
         width: parent.width
+        spacing: 0
 
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
+        Row {
             visible: count !== 0
-            //width: parent.width
-            color: Theme.secondaryColor
-            font.pixelSize: Theme.fontSizeTiny
-            text: count + "个站"
+            height: stationcountlabel.height
+            width: parent.width
+            spacing: Theme.paddingSmall
+
+            /*Rectangle {
+                id: viastationline
+                height: parent.height// / 3
+                width: Theme.paddingSmall
+                anchors.verticalCenter: parent.verticalCenter
+                color: previous_colour
+            }*/
+
+            Label {
+                id: stationcountlabel
+                //anchors.horizontalCenter: parent.horizontalCenter
+                //width: parent.width
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeTiny
+                text: qsTr("%1 个站").arg(count)
+            }
         }
+
         Row {
             id: row
-            height: column2.height
+            height: rightcolumn.height
             width: parent.width
             spacing: Theme.paddingSmall
             //anchors.verticalCenter: parent.verticalCenter
-            Rectangle {
-                id: line
-                anchors.verticalCenter: parent.verticalCenter
-                height: parent.height - Theme.paddingSmall
+
+            Item {
+                id: iconitem
+                height: parent.height
                 width: Theme.paddingSmall
-                radius: width / 2
-                color: line_colour
+                Rectangle {
+                    id: upperline
+                    visible: action !== StationModel.Depart
+                    anchors.bottom: parent.verticalCenter
+                    height: parent.height / 2 - Theme.paddingSmall
+                    width: Theme.paddingSmall
+                    //radius: width / 2
+                    color: action === StationModel.Arrive ?
+                               Theme.rgba(line_colour, 0.7) :
+                               Theme.rgba(previous_colour, 0.7)
+                }
+                Rectangle {
+                    id: lowerline
+                    visible: action !== StationModel.Arrive
+                    anchors.top: parent.verticalCenter
+                    height: parent.height / 2 - Theme.paddingSmall
+                    width: Theme.paddingSmall
+                    //radius: width / 2
+                    color: Theme.rgba(line_colour, 0.7)
+                }
             }
+
             Column {
-                id: column2
+                id: rightcolumn
                 anchors.verticalCenter: parent.verticalCenter
-                width: row.width - line.width - row.spacing
+                width: row.width - iconitem.width - row.spacing
 
                 Label {
                     id: namelabel
                     width: parent.width
-                    color: Theme.highlightColor
+                    color: action !== StationModel.Arrive ?
+                               Theme.highlightColor :
+                               Theme.primaryColor
                     font.pixelSize: Theme.fontSizeSmall
                     text: station_name
                 }
                 Label {
                     id: actionlabel
                     width: parent.width
-                    wrapMode: Text.Wrap
+                    //wrapMode: Text.Wrap
                     //color: Theme.secondaryColor
+                    truncationMode: TruncationMode.Fade
                     font.pixelSize: Theme.fontSizeExtraSmall
-                    property string _line_name: line_name
-                    property string _towards: towards
                     text: action === StationModel.Arrive ?
                               qsTr("到达") :
-                              qsTr("%1→%2").arg(_line_name).arg(_towards)
+                              qsTr("%1→%2").arg(line_name).arg(towards)
                     /*{
                         if(action == StationModel.Depart)
                             qsTr("乘坐 %1 往%2方向 列车").arg(line).arg(toward)
