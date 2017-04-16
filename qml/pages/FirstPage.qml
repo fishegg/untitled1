@@ -314,7 +314,7 @@ Page {
                 }
             }
 
-            ListView {
+            SilicaListView {
                 id: listview
                 width: parent.width
                 //height: page.height - header.height - row.height - button.height - column.spacing*3

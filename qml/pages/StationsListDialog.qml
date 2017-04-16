@@ -236,7 +236,7 @@ Dialog {
     canAccept: selected_from_number !== -1 && selected_to_number !== -1
     onAccepted: {
         //selected_station = listmodel.get(selected_index).no_name_string
-        console.log("selected" + selected_number)
+        //console.log("selected" + selected_number)
     }
 }
 
