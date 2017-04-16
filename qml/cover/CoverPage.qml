@@ -113,7 +113,7 @@ CoverBackground {
         }
     }
 
-    //onStatusChanged: coverlistmodel.update()
+    //onStatusChanged: console.log("content height="+coverlistview.contentItem.height)
     Connections {
         target: stationmodel
         onRowsInserted: {

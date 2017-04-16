@@ -16,6 +16,7 @@ class StationModel : public QAbstractListModel
     Q_ENUMS(StationRoles)
     Q_ENUMS(LoadStatus)
     Q_ENUMS(Action)
+    Q_ENUMS(Preference)
 public:
     enum StationRoles {
         NumRole = Qt::UserRole + 1,
@@ -48,6 +49,12 @@ public:
         Transfer,
         ExitTransfer
     };
+    enum Preference {
+        ConvenientlyTransfer = RouteSearch::ConvenientlyTransfer,
+        LessTimeTransfer,
+        ShortDistance,
+        Balance
+    };
 
     StationModel(QObject *parent = 0);
     ~StationModel();
@@ -62,7 +69,7 @@ public:
     Q_INVOKABLE QVariant data(const int &row, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant fulllistdata(const int &row, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QString linecolourat(const int &row);
-    Q_INVOKABLE bool search(int s, int d);
+    Q_INVOKABLE bool search(int s, int d, int p);
     Q_INVOKABLE int routedata(const int &index) const;
     Q_INVOKABLE int routelistrowcount() const;
 protected:

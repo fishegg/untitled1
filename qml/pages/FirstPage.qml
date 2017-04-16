@@ -42,7 +42,7 @@ Page {
 
     property int from: -1
     property int to: -1
-    property int route_preference: 1
+    property int preference: 0
 
     function openlistdialog() {
         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"),
@@ -55,7 +55,7 @@ Page {
             tobutton.value = dialog.selected_to_station_number + " " + dialog.selected_to_station_name
             to = dialog.selected_to_number
             if(from !== -1 && to !== -1) {
-                stationmodel.search(from,to)
+                stationmodel.search(from,to,preference)
                 //stationmodel.getroutelistdata()
                 touchblocker.enabled = true
                 timer.start()
@@ -91,6 +91,9 @@ Page {
     SilicaFlickable {
         id: flickable
         anchors.fill: parent
+        //width: parent.width
+        //height: parent.height - 100
+        //boundsBehavior: Flickable.DragOverBounds
 
         // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
         PullDownMenu {
@@ -118,7 +121,7 @@ Page {
                     t = tobutton.value
                     tobutton.value = frombutton.value
                     frombutton.value = t
-                    stationmodel.search(from,to)
+                    stationmodel.search(from,to,preference)
                     //stationmodel.getroutelistdata()
                     touchblocker.enabled = true
                     timer.start()
@@ -140,7 +143,7 @@ Page {
                     tobutton.value = frombutton.value
                     frombutton.value = t
                     flickable.scrollToTop()
-                    stationmodel.search(from,to)
+                    stationmodel.search(from,to,preference)
                     //stationmodel.getroutelistdata()
                     touchblocker.enabled = true
                     timer.start()
@@ -169,7 +172,7 @@ Page {
             //bottomPadding: spacing
             PageHeader {
                 id: header
-                title: qsTr("Show Page 2")
+                title: qsTr("Show Page 2") + listview.contentItem.height
             }
 
             Row {
@@ -215,70 +218,98 @@ Page {
                 //spacing: Theme.paddingSmall
                 height: Theme.itemSizeExtraSmall
                 BackgroundItem {
-                    id: type1button
+                    id: type0button
                     width: parent.width / 4
-                    highlighted: route_preference === 1
+                    highlighted: preference === 0
                     Label {
                         anchors.centerIn: parent
+                        color: type0button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "换乘方便"
                     }
                     onClicked: {
-                        route_preference = 1
-                        highlighted = route_preference === 1
+                        preference = 0
+                        highlighted = preference === 0
+                        type1button.highlighted = false
                         type2button.highlighted = false
                         type3button.highlighted = false
-                        type4button.highlighted = false
+                        if(from !== -1 && to !== -1) {
+                            stationmodel.search(from,to,preference)
+                            //stationmodel.getroutelistdata()
+                            touchblocker.enabled = true
+                            timer.start()
+                        }
                     }
                     /*onPressed: {
                         highlighted = !highlighted
                     }*/
                 }
                 BackgroundItem {
-                    id: type2button
+                    id: type1button
                     width: parent.width / 4
-                    highlighted: route_preference === 2
+                    highlighted: preference === 1
                     Label {
                         anchors.centerIn: parent
+                        color: type1button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "换乘少"
                     }
                     onClicked: {
-                        route_preference = 2
-                        highlighted = route_preference === 2
+                        preference = 1
+                        highlighted = preference === 1
+                        type0button.highlighted = false
+                        type2button.highlighted = false
+                        type3button.highlighted = false
+                        if(from !== -1 && to !== -1) {
+                            stationmodel.search(from,to,preference)
+                            //stationmodel.getroutelistdata()
+                            touchblocker.enabled = true
+                            timer.start()
+                        }
+                    }
+                }
+                BackgroundItem {
+                    id: type2button
+                    width: parent.width / 4
+                    highlighted: preference === 2
+                    Label {
+                        anchors.centerIn: parent
+                        color: type2button.highlighted ? Theme.highlightColor : Theme.primaryColor
+                        text: "车程短"
+                    }
+                    onClicked: {
+                        preference = 2
+                        highlighted = preference === 2
+                        type0button.highlighted = false
                         type1button.highlighted = false
                         type3button.highlighted = false
-                        type4button.highlighted = false
+                        if(from !== -1 && to !== -1) {
+                            stationmodel.search(from,to,preference)
+                            //stationmodel.getroutelistdata()
+                            touchblocker.enabled = true
+                            timer.start()
+                        }
                     }
                 }
                 BackgroundItem {
                     id: type3button
                     width: parent.width / 4
-                    highlighted: route_preference === 3
+                    highlighted: preference === 3
                     Label {
                         anchors.centerIn: parent
-                        text: "车程短"
-                    }
-                    onClicked: {
-                        route_preference = 3
-                        highlighted = route_preference === 3
-                        type1button.highlighted = false
-                        type2button.highlighted = false
-                        type4button.highlighted = false
-                    }
-                }
-                BackgroundItem {
-                    id: type4button
-                    width: parent.width / 4
-                    highlighted: route_preference === 4
-                    Label {
-                        anchors.centerIn: parent
+                        color: type3button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "平衡"
                     }
                     onClicked: {
-                        route_preference = 4
-                        highlighted = route_preference === 4
+                        preference = 3
+                        highlighted = preference === 3
+                        type0button.highlighted = false
                         type1button.highlighted = false
                         type2button.highlighted = false
-                        type3button.highlighted = false
+                        if(from !== -1 && to !== -1) {
+                            stationmodel.search(from,to,preference)
+                            //stationmodel.getroutelistdata()
+                            touchblocker.enabled = true
+                            timer.start()
+                        }
                     }
                 }
             }

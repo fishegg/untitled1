@@ -52,14 +52,21 @@ private:
     }
 
 public:
+    enum Preference
+    {
+        ConvenientlyTransfer,
+        LessTimeTransfer,
+        ShortDistance,
+        Balance
+    };
     RouteSearch(int numvert);
     ~RouteSearch();
     void cleararray(bool temp_array);
     //void getallnumber(int source, int destination, const QList<Station> &fullstationlist, const int station_index[]);
     bool getallnumber(int source, int destination, const QList<Station> &fullstationlist, const QVector<int> station_index);
-    void dijkstra(Graphm* G, int s, bool forcompare);
+    void dijkstra(Graphm* G, int s, int p, bool forcompare);
     //void search(Graphm* G, const QList<Station> &fullstationlist, const int station_index[], int s, int d);
-    bool search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d);
+    bool search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d, int p);
     //void printdistance();
     //void printroute(vector<Station>* list);
     //void printresult(vector<Station>* list);

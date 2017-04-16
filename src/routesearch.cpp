@@ -123,41 +123,222 @@ bool RouteSearch::getallnumber(int s, int d, const QList<Station> &fullstationli
     return true;
 }
 
-void RouteSearch::dijkstra(Graphm *G, int s, bool use_temp_array){
+void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
     //qDebug()<<"dijkstra start";
     int i, v, w;
     G->clearmark();
     cleararray(use_temp_array);
 
-    if(!use_temp_array){
-        //cout<<"!temp"<<endl;
-        Distance[s] = 0;
-        for(i=0; i<G->n(); i++){
-            v = minvertex(G, use_temp_array);
-            if(Distance[v] == 99999)
-                return;
-            G->setmark(v, 1);
-            for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                if(Distance[w] > (Distance[v] + G->weight(v,w))){
-                    Distance[w] = Distance[v] + G->weight(v,w);
-                    From[w] = v;
+    if(p == ConvenientlyTransfer){
+        int replaced_weight;
+        if(!use_temp_array){
+            //cout<<"!temp"<<endl;
+            Distance[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(G->weight(v,w) < 300){
+                        replaced_weight = G->weight(v,w);
+                    }
+                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                        replaced_weight = 300;
+                    }
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                        replaced_weight = 1;
+                    }
+                    else{
+                        replaced_weight = G->weight(v,w);
+                    }
+                    if(Distance[w] > (Distance[v] + replaced_weight)){
+                        Distance[w] = Distance[v] +replaced_weight;
+                        From[w] = v;
+                    }
+                }
+            }
+        }
+
+        else{
+            //cout<<"temp"<<endl;
+            Distance_temp[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance_temp[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(G->weight(v,w) < 300){
+                        replaced_weight = G->weight(v,w);
+                    }
+                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                        replaced_weight = 300;
+                    }
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                        replaced_weight = 1;
+                    }
+                    else{
+                        replaced_weight = G->weight(v,w);
+                    }
+                    if(Distance_temp[w] > (Distance_temp[v] + replaced_weight)){
+                        Distance_temp[w] = Distance_temp[v] + replaced_weight;
+                        From_temp[w] = v;
+                    }
                 }
             }
         }
     }
+    else if(p == LessTimeTransfer){
+        int replaced_weight;
+        if(!use_temp_array){
+            //cout<<"!temp"<<endl;
+            Distance[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(G->weight(v,w) < 300){
+                        replaced_weight = 1000;
+                    }
+                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                        replaced_weight = 2000;
+                    }
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                        replaced_weight = 1;
+                    }
+                    else{
+                        replaced_weight = G->weight(v,w);
+                    }
+                    if(Distance[w] > (Distance[v] + replaced_weight)){
+                        Distance[w] = Distance[v] + replaced_weight;
+                        From[w] = v;
+                    }
+                }
+            }
+        }
 
-    else{
-        //cout<<"temp"<<endl;
-        Distance_temp[s] = 0;
-        for(i=0; i<G->n(); i++){
-            v = minvertex(G, use_temp_array);
-            if(Distance_temp[v] == 99999)
-                return;
-            G->setmark(v, 1);
-            for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                if(Distance_temp[w] > (Distance_temp[v] + G->weight(v,w))){
-                    Distance_temp[w] = Distance_temp[v] + G->weight(v,w);
-                    From_temp[w] = v;
+        else{
+            //cout<<"temp"<<endl;
+            Distance_temp[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance_temp[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(G->weight(v,w) < 300){
+                        replaced_weight = 1000;
+                    }
+                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                        replaced_weight = 2000;
+                    }
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                        replaced_weight = 1;
+                    }
+                    else{
+                        replaced_weight = G->weight(v,w);
+                    }
+                    if(Distance_temp[w] > (Distance_temp[v] + replaced_weight)){
+                        Distance_temp[w] = Distance_temp[v] + replaced_weight;
+                        From_temp[w] = v;
+                    }
+                }
+            }
+        }
+    }
+    else if(p == ShortDistance){
+        int replaced_weight;
+        if(!use_temp_array){
+            int replaced_weight;
+            Distance[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(Distance[v] == 99999)
+                        return;
+                    G->setmark(v, 1);
+                    if(G->weight(v,w) < 300){
+                        replaced_weight = 1;
+                    }
+                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                        replaced_weight = 1;
+                    }
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                        replaced_weight = G->weight(v,w);
+                    }
+                    else{
+                        replaced_weight = G->weight(v,w);
+                    }
+                    if(Distance[w] > (Distance[v] + replaced_weight)){
+                        Distance[w] = Distance[v] + replaced_weight;
+                        From[w] = v;
+                    }
+                }
+            }
+        }
+
+        else{
+            Distance_temp[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance_temp[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(G->weight(v,w) < 300){
+                        replaced_weight = 1;
+                    }
+                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                        replaced_weight = 1;
+                    }
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                        replaced_weight = G->weight(v,w);
+                    }
+                    else{
+                        replaced_weight = G->weight(v,w);
+                    }
+                    if(Distance_temp[w] > (Distance_temp[v] + replaced_weight)){
+                        Distance_temp[w] = Distance_temp[v] + replaced_weight;
+                        From_temp[w] = v;
+                    }
+                }
+            }
+        }
+    }
+    else if(p == Balance){
+        if(!use_temp_array){
+            //cout<<"!temp"<<endl;
+            Distance[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(Distance[w] > (Distance[v] + G->weight(v,w))){
+                        Distance[w] = Distance[v] + G->weight(v,w);
+                        From[w] = v;
+                    }
+                }
+            }
+        }
+
+        else{
+            //cout<<"temp"<<endl;
+            Distance_temp[s] = 0;
+            for(i=0; i<G->n(); i++){
+                v = minvertex(G, use_temp_array);
+                if(Distance_temp[v] == 99999)
+                    return;
+                G->setmark(v, 1);
+                for(w=G->first(v); w<G->n(); w=G->next(v,w)){
+                    if(Distance_temp[w] > (Distance_temp[v] + G->weight(v,w))){
+                        Distance_temp[w] = Distance_temp[v] + G->weight(v,w);
+                        From_temp[w] = v;
+                    }
                 }
             }
         }
@@ -165,7 +346,7 @@ void RouteSearch::dijkstra(Graphm *G, int s, bool use_temp_array){
     //qDebug()<<"finished";
 }
 
-bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d){
+bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d, int p){
     if(!getallnumber(s,d,fullstationlist,station_index))
         return false;
 
@@ -175,7 +356,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         destination = destination_list.dequeue();
         //source_list.dequeue();
         //destination_list.dequeue();
-        dijkstra(G, source, false);
+        dijkstra(G, source, p, false);
     }
 
     else if(source_list.size() > 1 && destination_list.size() == 1){
@@ -184,7 +365,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         destination = destination_list.dequeue();
         //source_list.dequeue();
         //destination_list.dequeue();
-        dijkstra(G, source, false);
+        dijkstra(G, source, p, false);
         int n = source_list.size(), source_temp;
         //cout<<"n"<<n<<endl;
         int i, j;
@@ -194,7 +375,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
             //source_list.dequeue();
             //cout<<"dequeued"<<endl;
             //cout<<"sourcen="<<source_temp<<endl;
-            dijkstra(G, source_temp, true);
+            dijkstra(G, source_temp, p, true);
             if(Distance[destination] > Distance_temp[destination]){//如果这条线比较近
                 source = source_temp;
                 for(j=0; j<fullstationlist.size(); j++){
@@ -211,7 +392,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         destination = destination_list.dequeue();
         //source_list.dequeue();
         //destination_list.dequeue();
-        dijkstra(G, source, false);
+        dijkstra(G, source, p, false);
         int n = destination_list.size(), destination_temp;
         //cout<<"n"<<n<<endl;
         int i, j;
@@ -220,7 +401,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
             destination_temp = destination_list.dequeue();
             //destination_list.dequeue();
             //cout<<"dequeued"<<endl;
-            dijkstra(G, source, true);
+            dijkstra(G, source, p, true);
             if(Distance[destination] > Distance_temp[destination_temp]){
                 destination = destination_temp;
                 for(j=0; j<fullstationlist.size(); j++){
@@ -241,7 +422,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
         destination_list.enqueue(destination);
         //qDebug() << "source destination" << source << " " << destination;
 
-        dijkstra(G, source, false);
+        dijkstra(G, source, p, false);
 
         int source_count = source_list.size(), destination_count = destination_list.size(),source_temp, destination_temp;
         int i, j, k;
@@ -251,7 +432,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
             for(j=0; j<destination_count; j++){
                 destination_temp = destination_list.dequeue();
                 //destination_list.dequeue();
-                dijkstra(G, source_temp, true);
+                dijkstra(G, source_temp, p, true);
                 //qDebug() << "distance" << Distance[destination];
                 //qDebug() << "distance_temp" << Distance_temp[destination_temp];
                 if(Distance[destination] > Distance_temp[destination_temp]){
