@@ -72,7 +72,7 @@ Page {
     Connections {
         target: stationmodel
         //onRowsInserted: console.log("data changed")
-        onRowsInserted: console.log("count"+stationmodel.rowCount())
+        //onRowsInserted: console.log("count"+stationmodel.rowCount())
     }
 
     Timer {
@@ -130,6 +130,7 @@ Page {
         }
 
         PushUpMenu {
+            visible: flickable.contentHeight > flickable.height + 1
             MenuItem {
                 visible: from !== -1 && to !== -1
                 //enabled: from !== -1 && to !== -1
@@ -161,7 +162,9 @@ Page {
         }
 
         // Tell SilicaFlickable the height of its content.
-        contentHeight: column.height + column.spacing
+        contentHeight: column.height + column.spacing > height ?
+                           column.height + column.spacing :
+                           height + 1
 
         // Place our content in a Column.  The PageHeader is always placed at the top
         // of the page, followed by our content.
@@ -172,7 +175,7 @@ Page {
             //bottomPadding: spacing
             PageHeader {
                 id: header
-                title: qsTr("Show Page 2") + listview.contentItem.height
+                title: qsTr("Show Page 2𧒽") + listview.contentItem.height + "\u274BD"
             }
 
             Row {
@@ -226,7 +229,7 @@ Page {
                         color: type0button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "换乘方便"
                     }
-                    onClicked: {
+                    onReleased: {
                         preference = 0
                         highlighted = preference === 0
                         type1button.highlighted = false
@@ -252,7 +255,7 @@ Page {
                         color: type1button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "换乘少"
                     }
-                    onClicked: {
+                    onReleased: {
                         preference = 1
                         highlighted = preference === 1
                         type0button.highlighted = false
@@ -275,7 +278,7 @@ Page {
                         color: type2button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "车程短"
                     }
-                    onClicked: {
+                    onReleased: {
                         preference = 2
                         highlighted = preference === 2
                         type0button.highlighted = false
@@ -298,7 +301,7 @@ Page {
                         color: type3button.highlighted ? Theme.highlightColor : Theme.primaryColor
                         text: "平衡"
                     }
-                    onClicked: {
+                    onReleased: {
                         preference = 3
                         highlighted = preference === 3
                         type0button.highlighted = false

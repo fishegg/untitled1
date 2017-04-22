@@ -140,13 +140,13 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
                     return;
                 G->setmark(v, 1);
                 for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                    if(G->weight(v,w) < 300){
+                    if(G->weight(v,w) < 200){
                         replaced_weight = G->weight(v,w);
                     }
-                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                    else if(G->weight(v,w) == 200 || G->weight(v,w) == 300){
                         replaced_weight = 300;
                     }
-                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 99999){
                         replaced_weight = 1;
                     }
                     else{
@@ -169,13 +169,13 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
                     return;
                 G->setmark(v, 1);
                 for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                    if(G->weight(v,w) < 300){
+                    if(G->weight(v,w) < 200){
                         replaced_weight = G->weight(v,w);
                     }
-                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                    else if(G->weight(v,w) == 200 || G->weight(v,w) == 300){
                         replaced_weight = 300;
                     }
-                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 99999){
                         replaced_weight = 1;
                     }
                     else{
@@ -200,13 +200,13 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
                     return;
                 G->setmark(v, 1);
                 for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                    if(G->weight(v,w) < 300){
+                    if(G->weight(v,w) < 200){
                         replaced_weight = 1000;
                     }
-                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                    else if(G->weight(v,w) == 200 || G->weight(v,w) == 300){
                         replaced_weight = 2000;
                     }
-                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 99999){
                         replaced_weight = 1;
                     }
                     else{
@@ -229,13 +229,13 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
                     return;
                 G->setmark(v, 1);
                 for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                    if(G->weight(v,w) < 300){
+                    if(G->weight(v,w) < 200){
                         replaced_weight = 1000;
                     }
-                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                    else if(G->weight(v,w) == 200 || G->weight(v,w) == 300){
                         replaced_weight = 2000;
                     }
-                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 99999){
                         replaced_weight = 1;
                     }
                     else{
@@ -263,10 +263,10 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
                     if(G->weight(v,w) < 300){
                         replaced_weight = 1;
                     }
-                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                    else if(G->weight(v,w) == 200 || G->weight(v,w) == 300){
                         replaced_weight = 1;
                     }
-                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 99999){
                         replaced_weight = G->weight(v,w);
                     }
                     else{
@@ -288,13 +288,13 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
                     return;
                 G->setmark(v, 1);
                 for(w=G->first(v); w<G->n(); w=G->next(v,w)){
-                    if(G->weight(v,w) < 300){
+                    if(G->weight(v,w) < 200){
                         replaced_weight = 1;
                     }
-                    else if(G->weight(v,w) == 300 || G->weight(v,w) == 30000){
+                    else if(G->weight(v,w) == 200 || G->weight(v,w) == 300){
                         replaced_weight = 1;
                     }
-                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 30000){
+                    else if(G->weight(v,w) > 300 && G->weight(v,w) < 99999){
                         replaced_weight = G->weight(v,w);
                     }
                     else{
@@ -346,7 +346,7 @@ void RouteSearch::dijkstra(Graphm *G, int s, int p, bool use_temp_array){
     //qDebug()<<"finished";
 }
 
-bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d, int p){
+bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, const int station_count, const int s, const int d, const int p){
     if(!getallnumber(s,d,fullstationlist,station_index))
         return false;
 
@@ -378,7 +378,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
             dijkstra(G, source_temp, p, true);
             if(Distance[destination] > Distance_temp[destination]){//如果这条线比较近
                 source = source_temp;
-                for(j=0; j<fullstationlist.size(); j++){
+                for(j=0; j<station_count; j++){
                     Distance[j] = Distance_temp[j];
                     From[j] = From_temp[j];
                 }
@@ -404,7 +404,7 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
             dijkstra(G, source, p, true);
             if(Distance[destination] > Distance_temp[destination_temp]){
                 destination = destination_temp;
-                for(j=0; j<fullstationlist.size(); j++){
+                for(j=0; j<station_count; j++){
                     Distance[j] = Distance_temp[j];
                     From[j] = From_temp[j];
                 }
@@ -435,13 +435,21 @@ bool RouteSearch::search(Graphm* G, const QList<Station> &fullstationlist, const
                 dijkstra(G, source_temp, p, true);
                 //qDebug() << "distance" << Distance[destination];
                 //qDebug() << "distance_temp" << Distance_temp[destination_temp];
+                //qDebug() << "Distance from" << source << "to" << destination << Distance[destination];
+                //qDebug() << "Distance temp from" << source_temp << "to" << destination_temp << Distance_temp[destination_temp];
                 if(Distance[destination] > Distance_temp[destination_temp]){
                     source = source_temp;
+                    //qDebug() << "original dst" << destination;
                     destination = destination_temp;
-                    for(k=0; k<fullstationlist.size(); k++){
+                    //qDebug() << "changed dst" << destination;
+                    //qDebug() << "before Distance[] Distance[temp]" << Distance[destination] << Distance[destination_temp];
+                    //qDebug() << "before Distance_temp[] Distance_temp[temp]" << Distance_temp[destination] << Distance_temp[destination_temp] << endl;
+                    for(k=0; k<station_count; k++){
                         Distance[k] = Distance_temp[k];
                         From[k] = From_temp[k];
                     }
+                    //qDebug() << "after Distance[] Distance[temp]" << Distance[destination] << Distance[destination_temp];
+                    //qDebug() << "after Distance_temp[] Distance_temp[temp]" << Distance_temp[destination] << Distance_temp[destination_temp] << endl;
                     //qDebug() << "source destination" << source << " " << destination;
                 }
                 destination_list.enqueue(destination_temp);
@@ -462,6 +470,7 @@ bool RouteSearch::getresult(QList<int>* routestationlist)//, const QList<Station
     //Station station_temp;
     int station_number_temp;
     //int i;
+    //qDebug() << "destination" << destination;
     int prev = destination;
     int station_via_count = 0;
     routestationlist->clear();

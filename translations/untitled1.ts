@@ -26,6 +26,10 @@
         <source>Show Page 2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show Page 2𧒽</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RouteListViewDelegate</name>

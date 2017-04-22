@@ -66,7 +66,7 @@ public:
     bool getallnumber(int source, int destination, const QList<Station> &fullstationlist, const QVector<int> station_index);
     void dijkstra(Graphm* G, int s, int p, bool forcompare);
     //void search(Graphm* G, const QList<Station> &fullstationlist, const int station_index[], int s, int d);
-    bool search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, int s, int d, int p);
+    bool search(Graphm* G, const QList<Station> &fullstationlist, const QVector<int> station_index, const int station_count, const int s, const int d, const int p);
     //void printdistance();
     //void printroute(vector<Station>* list);
     //void printresult(vector<Station>* list);

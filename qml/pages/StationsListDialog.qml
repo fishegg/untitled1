@@ -179,7 +179,7 @@ Dialog {
                             tolabel.text = selected_to_station_number + " " + selected_to_station_name
                         }
                     }
-                    onClicked: {
+                    onReleased: {
                         //console.log("click" + index)
                         if(selected_from_number === number) {
                             selected_from_number = -1
@@ -220,8 +220,9 @@ Dialog {
                             }
                         }
                         //listdialog.accept()
-                        searchfield.text = ""
-                        //searchfield.focus = true
+                        //searchfield.text = ""
+                        searchfield.focus = true
+                        searchfield.forceActiveFocus()
                     }
                 }
             }

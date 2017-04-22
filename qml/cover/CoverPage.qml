@@ -120,7 +120,7 @@ CoverBackground {
             coverlistmodel.update()
             //coverlistview.height = coverlistview.height * 0.75
             //coverlistview.clip = true
-            console.log("content height="+coverlistview.contentItem.height+"height="+coverlistview.height)
+            //console.log("content height="+coverlistview.contentItem.height+"height="+coverlistview.height)
             if(coverlistmodel.count > 3) {
                 //coverlistview.height = coverlistview.height * 0.75
                 coverlistview.clip = true
