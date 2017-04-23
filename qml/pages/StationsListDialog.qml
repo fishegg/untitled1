@@ -10,9 +10,11 @@ Dialog {
 
     //property string searchString
     property int selected_from_number: -1
+    property int selected_from_index: -1
     property string selected_from_station_number: "无"
     property string selected_from_station_name: "无"
     property int selected_to_number: -1
+    property int selected_to_index: -1
     property string selected_to_station_number: "无"
     property string selected_to_station_name: "无"
     property bool auto_accept
@@ -77,21 +79,29 @@ Dialog {
             Row {
                 width: parent.width
                 height: Theme.itemSizeExtraSmall
-                Label {
+                Button {
                     id: fromlabel
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width / 2
                     text: "未选择出发站"
-                    horizontalAlignment: Text.AlignHCenter
-                    truncationMode: TruncationMode.Fade
+                    //horizontalAlignment: Text.AlignHCenter
+                    //truncationMode: TruncationMode.Fade
+                    onClicked: {
+                        //console.log("from index" + selected_from_index)
+                        listview.positionViewAtIndex(selected_from_index, ListView.Center)
+                    }
                 }
-                Label {
+                Button {
                     id: tolabel
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width / 2
                     text: "未选择目的站"
-                    horizontalAlignment: Text.AlignHCenter
-                    truncationMode: TruncationMode.Fade
+                    //horizontalAlignment: Text.AlignHCenter
+                    //truncationMode: TruncationMode.Fade
+                    onClicked: {
+                        //console.log("to index" + selected_to_index)
+                        listview.positionViewAtIndex(selected_to_index, ListView.Center)
+                    }
                 }
             }
 
@@ -105,7 +115,7 @@ Dialog {
         }
     }
 
-    SilicaFlickable {
+    /*SilicaFlickable {
         id: flickable
         //anchors.fill: parent
         height: parent.height - dialogheader.height - banner.height
@@ -122,20 +132,7 @@ Dialog {
                 height: contentHeight
                 width: parent.width
                 spacing: 0
-                /*add: Transition {
-                    NumberAnimation {
-                        properties: "x"
-                        from: listdialog.width
-                        duration: 100
-                    }a
-                }*/
                 model: undefined
-
-                /*header: SearchField {
-                    id: searchField
-                    width: parent.width - Theme.paddingLarge
-                    onTextChanged: listmodel.update()
-                }*/
 
                 section.property: "line_name"
                 section.delegate: SectionHeader {
@@ -144,7 +141,7 @@ Dialog {
 
                 delegate: BackgroundItem {
                     id: listitem
-                    highlighted: selected_from_number === number || selected_to_number === number
+                    //highlighted: selected_from_number === number || selected_to_number === number
 
                     Label {
                         id: namelabel
@@ -166,6 +163,7 @@ Dialog {
                     Component.onCompleted: {
                         if(selected_from_number === number) {
                             selected_from_station_number = station_number
+                            selected_from_index = index
                             selected_from_station_name = station_name
                             namelabel.text = "出发站 " + station_number + " " + station_name
                             highlighted = true
@@ -173,6 +171,7 @@ Dialog {
                         }
                         else if(selected_to_number === number) {
                             selected_to_station_number = station_number
+                            selected_to_index = index
                             selected_to_station_name = station_name
                             namelabel.text = "目的站 " + station_number + " " + station_name
                             highlighted = true
@@ -183,6 +182,7 @@ Dialog {
                         //console.log("click" + index)
                         if(selected_from_number === number) {
                             selected_from_number = -1
+                            selected_from_index = -1
                             selected_from_station_number = "无"
                             selected_from_station_name = "无"
                             namelabel.text = station_number + " " + station_name
@@ -191,6 +191,7 @@ Dialog {
                         }
                         else if(selected_to_number === number) {
                             selected_to_number = -1
+                            selected_to_index = -1
                             selected_to_station_number = "无"
                             selected_to_station_name = "无"
                             namelabel.text = station_number + " " + station_name
@@ -199,6 +200,7 @@ Dialog {
                         }
                         else if(selected_from_number === -1) {
                             selected_from_number = number
+                            selected_from_index = index
                             selected_from_station_number = station_number
                             selected_from_station_name = station_name
                             namelabel.text = "出发站 " + station_number + " " + station_name
@@ -210,6 +212,7 @@ Dialog {
                         }
                         else if(selected_to_number === -1) {
                             selected_to_number = number
+                            selected_to_index = index
                             selected_to_station_number = station_number
                             selected_to_station_name = station_name
                             namelabel.text = "目的站 " + station_number + " " + station_name
@@ -232,6 +235,114 @@ Dialog {
 
         onFlickStarted: searchfield.focus = false
         onMovementEnded: searchfield.focus = (flickable.contentY === 0)
+    }*/
+
+    SilicaListView {
+        id: listview
+        height: parent.height - dialogheader.height - banner.height
+        width: parent.width
+        anchors.top: banner.bottom
+        model: undefined
+        clip: true
+
+        section.property: "line_name"
+        section.delegate: SectionHeader {
+            text: section
+        }
+
+        delegate: BackgroundItem {
+            id: listitem
+            //highlighted: selected_from_number === number || selected_to_number === number
+
+            Label {
+                id: namelabel
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    horizontalCenter: parent.horizontalCenter
+                }
+                color: listitem.highlighted ?
+                           Theme.highlightColor :
+                           Theme.primaryColor
+                text: selected_from_number === number ?
+                          "出发站 " + station_number + " " + station_name :
+                          (selected_to_number === number ?
+                               "目的站 " + station_number + " " + station_name :
+                               Theme.highlightText(station_number + " " + station_name, searchfield.text, Theme.highlightColor)
+                           )
+            }
+
+            Component.onCompleted: {
+                if(selected_from_number === number) {
+                    selected_from_station_number = station_number
+                    selected_from_index = index
+                    selected_from_station_name = station_name
+                    namelabel.text = "出发站 " + station_number + " " + station_name
+                    highlighted = true
+                    fromlabel.text = selected_from_station_number + " " + selected_from_station_name
+                }
+                else if(selected_to_number === number) {
+                    selected_to_station_number = station_number
+                    selected_to_index = index
+                    selected_to_station_name = station_name
+                    namelabel.text = "目的站 " + station_number + " " + station_name
+                    highlighted = true
+                    tolabel.text = selected_to_station_number + " " + selected_to_station_name
+                }
+            }
+            onReleased: {
+                //console.log("click" + index)
+                if(selected_from_number === number) {
+                    selected_from_number = -1
+                    selected_from_index = -1
+                    selected_from_station_number = "无"
+                    selected_from_station_name = "无"
+                    namelabel.text = station_number + " " + station_name
+                    highlighted = false
+                    fromlabel.text = "未选择出发站"
+                }
+                else if(selected_to_number === number) {
+                    selected_to_number = -1
+                    selected_to_index = -1
+                    selected_to_station_number = "无"
+                    selected_to_station_name = "无"
+                    namelabel.text = station_number + " " + station_name
+                    highlighted = false
+                    tolabel.text = "未选择目的站"
+                }
+                else if(selected_from_number === -1) {
+                    selected_from_number = number
+                    selected_from_index = index
+                    selected_from_station_number = station_number
+                    selected_from_station_name = station_name
+                    namelabel.text = "出发站 " + station_number + " " + station_name
+                    highlighted = true
+                    fromlabel.text = selected_from_station_number + " " + selected_from_station_name
+                    if(auto_accept && selected_to_number !== -1) {
+                        listdialog.accept()
+                    }
+                }
+                else if(selected_to_number === -1) {
+                    selected_to_number = number
+                    selected_to_index = index
+                    selected_to_station_number = station_number
+                    selected_to_station_name = station_name
+                    namelabel.text = "目的站 " + station_number + " " + station_name
+                    highlighted = true
+                    tolabel.text = selected_to_station_number + " " + selected_to_station_name
+                    if(auto_accept && selected_from_number !== -1) {
+                        listdialog.accept()
+                    }
+                }
+                //listdialog.accept()
+                //searchfield.text = ""
+                searchfield.focus = true
+                searchfield.forceActiveFocus()
+            }
+        }
+        VerticalScrollDecorator {}
+
+        onFlickStarted: searchfield.focus = false
+        onMovementEnded: searchfield.focus = (listview.contentY === 0)
     }
 
     canAccept: selected_from_number !== -1 && selected_to_number !== -1
