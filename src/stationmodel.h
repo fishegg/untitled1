@@ -69,7 +69,7 @@ public:
     Q_INVOKABLE QVariant data(const int &row, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant fulllistdata(const int &row, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QString linecolourat(const int &row);
-    Q_INVOKABLE bool search(int s, int d, int p);
+    Q_INVOKABLE bool search(const int &s, const int &d, const int &p, const int &multiple = 10);
     Q_INVOKABLE int routedata(const int &index) const;
     Q_INVOKABLE int routelistrowcount() const;
 protected:

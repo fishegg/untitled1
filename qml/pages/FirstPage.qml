@@ -40,27 +40,62 @@ import "../components"
 Page {
     id: page
 
-    property int from: -1
-    property int to: -1
-    property int preference: 0
+    property int from_number: -1
+    property int to_number: -1
+    property string from_station_number
+    property string to_station_number
+    property string from_station_name
+    property string to_station_name
+    property int from_index
+    property int to_index
+    property int preference: 1
 
-    function openlistdialog(f, t) {
+    function openlistdialog(f, t, fnu, tnu, fna, tna, fi, ti) {
         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"),
                                     {selected_from_number: f,
-                                    selected_to_number: t
+                                        selected_to_number: t,
+                                        selected_from_station_number: fnu,
+                                        selected_to_station_number: tnu,
+                                        selected_from_station_name: fna,
+                                        selected_to_station_name: tna,
+                                        selected_from_index: fi,
+                                        selected_to_index: ti
                                     })
         dialog.accepted.connect(function() {
-            frombutton.value = dialog.selected_from_station_number + " " + dialog.selected_from_station_name
-            from = dialog.selected_from_number
-            tobutton.value = dialog.selected_to_station_number + " " + dialog.selected_to_station_name
-            to = dialog.selected_to_number
-            if(from !== -1 && to !== -1) {
-                stationmodel.search(from,to,preference)
+            //frombutton.value = dialog.selected_from_station_number + " " + dialog.selected_from_station_name
+            from_number = dialog.selected_from_number
+            from_station_name = dialog.selected_from_station_name
+            from_station_number = dialog.selected_from_station_number
+            from_index = dialog.selected_from_index
+            frombutton.value = from_station_number + " " + from_station_name
+            //tobutton.value = dialog.selected_to_station_number + " " + dialog.selected_to_station_name
+            to_number = dialog.selected_to_number
+            to_station_name = dialog.selected_to_station_name
+            to_station_number = dialog.selected_to_station_number
+            to_index = dialog.selected_to_index
+            tobutton.value = to_station_number + " " + to_station_name
+            /*if(from_number !== -1 && to_number !== -1) {
+                stationmodel.search(from_number,to_number,preference)
                 //stationmodel.getroutelistdata()
-                touchblocker.enabled = true
-                timer.start()
-            }
+                wait()
+            }*/
+            search()
         })
+    }
+
+    function swapfromto() {
+        var t
+        t = to_number
+        to_number = from_number
+        from_number = t
+        t = tobutton.value
+        tobutton.value = frombutton.value
+        frombutton.value = t
+    }
+
+    function wait() {
+        touchblocker.enabled = true
+        timer.start()
     }
 
     function setpreference(type) {
@@ -69,11 +104,13 @@ Page {
         type2button.highlighted = false
         type3button.highlighted = false*/
         preference = type
-        if(from !== -1 && to !== -1) {
-            stationmodel.search(from,to,preference)
-            //stationmodel.getroutelistdata()
-            touchblocker.enabled = true
-            timer.start()
+        search()
+    }
+
+    function search() {
+        if(from_number !== -1 && to_number !== -1) {
+            stationmodel.search(from_number,to_number,preference)
+            wait()
         }
     }
 
@@ -91,7 +128,7 @@ Page {
 
     Timer {
         id: timer
-        interval: 600
+        interval: 300
         //running: true
         onTriggered: {
             //stationmodel.getfulllistdata()
@@ -116,29 +153,24 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
             }
             MenuItem {
-                text: "选择出发站及目的站"
+                text: from_number !== -1 || to_number !== -1 ?
+                          qsTr("重选出发站及目的站") :
+                          qsTr("选择出发站及目的站")
                 onClicked: {
-                    /*from = -1
-                    to = -1*/
-                    openlistdialog(-1, -1)
+                    /*from_number = -1
+                    to_number = -1*/
+                    openlistdialog(-1, -1, "", "", "", "", -1, -1)
                 }
             }
             MenuItem {
-                visible: from !== -1 && to !== -1
-                //enabled: from !== -1 && to !== -1
-                text: "出发站↔目的站"
-                property var t
+                visible: from_number !== -1 && to_number !== -1
+                //enabled: from_number !== -1 && to_number !== -1
+                text: qsTr("出发站↔目的站")
                 onClicked: {
-                    t = to
-                    to = from
-                    from = t
-                    t = tobutton.value
-                    tobutton.value = frombutton.value
-                    frombutton.value = t
-                    stationmodel.search(from,to,preference)
+                    swapfromto()
+                    stationmodel.search(from_number,to_number,preference)
                     //stationmodel.getroutelistdata()
-                    touchblocker.enabled = true
-                    timer.start()
+                    wait()
                 }
             }
         }
@@ -146,30 +178,26 @@ Page {
         PushUpMenu {
             //visible: flickable.contentHeight > flickable.height + 1
             MenuItem {
-                visible: from !== -1 && to !== -1
-                //enabled: from !== -1 && to !== -1
-                text: "出发站↔目的站"
+                visible: from_number !== -1 && to_number !== -1
+                //enabled: from_number !== -1 && to_number !== -1
+                text: qsTr("出发站↔目的站")
                 property var t
                 onClicked: {
-                    t = to
-                    to = from
-                    from = t
-                    t = tobutton.value
-                    tobutton.value = frombutton.value
-                    frombutton.value = t
+                    swapfromto()
                     flickable.scrollToTop()
-                    stationmodel.search(from,to,preference)
+                    stationmodel.search(from_number,to_number,preference)
                     //stationmodel.getroutelistdata()
-                    touchblocker.enabled = true
-                    timer.start()
+                    wait()
                 }
             }
             MenuItem {
-                text: "选择出发站及目的站"
+                text: from_number !== -1 || to_number !== -1 ?
+                          qsTr("重选出发站及目的站") :
+                          qsTr("选择出发站及目的站")
                 onClicked: {
-                    /*from = -1
-                    to = -1*/
-                    openlistdialog(-1, -1)
+                    /*from_number = -1
+                    to_number = -1*/
+                    openlistdialog(-1, -1, "", "", "", "", -1, -1)
                     flickable.scrollToTop()
                 }
             }
@@ -198,23 +226,24 @@ Page {
                 ValueButton {
                     id: frombutton
                     width: parent.width / 2
-                    label: "出发站"
-                    value: "选择"
+                    label: qsTr("出发站")
+                    value: qsTr("点击选择")
                     onClicked: {
-                        //from = -1
-                        console.log("to" + to)
-                        openlistdialog(-1, to)
+                        //from_number = -1
+                        //console.log("to_number" + to_number)
+                        openlistdialog(-1, to_number, "", to_station_number, "", to_station_name, -1, to_index)
                     }
                 }
                 ValueButton {
                     id: tobutton
+                    enabled: from_number !== -1
                     width: parent.width / 2
-                    label: "目的站"
-                    value: "选择"
+                    label: qsTr("目的站")
+                    //value: "选择"
                     onClicked: {
-                        //to = -1
-                        console.log("from" + from)
-                        openlistdialog(from, -1)
+                        //to_number = -1
+                        //console.log("from_name" + from_station_name)
+                        openlistdialog(from_number, -1, from_station_number, "", from_station_name, "", from_index, -1)
                     }
                 }
             }
@@ -235,15 +264,24 @@ Page {
                 //anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width// - Theme.horizontalPageMargins
                 //spacing: Theme.paddingSmall
-                height: Theme.itemSizeExtraSmall
+                //height: Theme.itemSizeExtraSmall
                 BackgroundItem {
                     id: type0button
                     width: parent.width / 4
                     //highlighted: preference === 0
+                    Rectangle {
+                        id: selectedindicator0
+                        visible: preference === StationModel.ConvenientlyTransfer
+                        anchors.fill: parent
+                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                        //color: Theme.secondaryHighlightColor
+                    }
                     Label {
                         anchors.centerIn: parent
-                        color: type0button.highlighted ? Theme.highlightColor : Theme.primaryColor
-                        text: "换乘方便"
+                        color: type0button.highlighted || selectedindicator0.visible ?
+                                   Theme.highlightColor :
+                                   Theme.primaryColor
+                        text: qsTr("步行少")
                     }
                     onReleased: {
                         /*preference = 0
@@ -251,13 +289,13 @@ Page {
                         type1button.highlighted = false
                         type2button.highlighted = false
                         type3button.highlighted = false
-                        if(from !== -1 && to !== -1) {
-                            stationmodel.search(from,to,preference)
+                        if(from_number !== -1 && to_number !== -1) {
+                            stationmodel.search(from_number,to_number,preference)
                             //stationmodel.getroutelistdata()
                             touchblocker.enabled = true
                             timer.start()
                         }*/
-                        setpreference(0)
+                        setpreference(StationModel.ConvenientlyTransfer)
                     }
                     /*onPressed: {
                         highlighted = !highlighted
@@ -267,73 +305,103 @@ Page {
                     id: type1button
                     width: parent.width / 4
                     //highlighted: preference === 1
+                    Rectangle {
+                        id: selectedindicator1
+                        visible: preference === StationModel.LessTimeTransfer
+                        anchors.fill: parent
+                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                        //color: Theme.secondaryHighlightColor
+                    }
                     Label {
                         anchors.centerIn: parent
-                        color: type1button.highlighted ? Theme.highlightColor : Theme.primaryColor
-                        text: "换乘少"
+                        color: type1button.highlighted || selectedindicator1.visible ?
+                                   Theme.highlightColor :
+                                   Theme.primaryColor
+                        text: qsTr("换乘少")
                     }
                     onReleased: {
-                        /*preference = 1
-                        highlighted = preference === 1
-                        type0button.highlighted = false
-                        type2button.highlighted = false
-                        type3button.highlighted = false
-                        if(from !== -1 && to !== -1) {
-                            stationmodel.search(from,to,preference)
-                            //stationmodel.getroutelistdata()
-                            touchblocker.enabled = true
-                            timer.start()
-                        }*/
-                        setpreference(1)
+                        setpreference(StationModel.LessTimeTransfer)
                     }
                 }
                 BackgroundItem {
                     id: type2button
                     width: parent.width / 4
                     //highlighted: preference === 2
+                    Rectangle {
+                        id: selectedindicator2
+                        visible: preference === StationModel.ShortDistance
+                        anchors.fill: parent
+                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                        //color: Theme.secondaryHighlightColor
+                    }
                     Label {
                         anchors.centerIn: parent
-                        color: type2button.highlighted ? Theme.highlightColor : Theme.primaryColor
-                        text: "车程短"
+                        color: type2button.highlighted || selectedindicator2.visible ?
+                                   Theme.highlightColor :
+                                   Theme.primaryColor
+                        text: qsTr("车程短")
                     }
                     onReleased: {
-                        /*preference = 2
-                        highlighted = preference === 2
-                        type0button.highlighted = false
-                        type1button.highlighted = false
-                        type3button.highlighted = false
-                        if(from !== -1 && to !== -1) {
-                            stationmodel.search(from,to,preference)
-                            //stationmodel.getroutelistdata()
-                            touchblocker.enabled = true
-                            timer.start()
-                        }*/
-                        setpreference(2)
+                        setpreference(StationModel.ShortDistance)
                     }
                 }
                 BackgroundItem {
                     id: type3button
                     width: parent.width / 4
                     //highlighted: preference === 3
+                    Rectangle {
+                        id: selectedindicator3
+                        visible: preference === StationModel.Balance
+                        anchors.fill: parent
+                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                        //color: Theme.secondaryHighlightColor
+                    }
                     Label {
                         anchors.centerIn: parent
-                        color: type3button.highlighted ? Theme.highlightColor : Theme.primaryColor
-                        text: "平衡"
+                        color: type3button.highlighted || selectedindicator3.visible ?
+                                   Theme.highlightColor :
+                                   Theme.primaryColor
+                        text: qsTr("平衡")
                     }
                     onReleased: {
-                        /*preference = 3
-                        highlighted = preference === 3
-                        type0button.highlighted = false
-                        type1button.highlighted = false
-                        type2button.highlighted = false
-                        if(from !== -1 && to !== -1) {
-                            stationmodel.search(from,to,preference)
-                            //stationmodel.getroutelistdata()
-                            touchblocker.enabled = true
-                            timer.start()
-                        }*/
-                        setpreference(3)
+                        setpreference(StationModel.Balance)
                     }
+                }
+            }
+
+            Row {
+                width: parent.width
+                Slider {
+                    width: parent.width - acceptbutton.width - closebutton.width
+                    minimumValue: 1
+                    maximumValue: 20
+                    stepSize: 1
+                    value: 10
+                    valueText: sliderValue < 6 ?
+                                   qsTr("车程短") :
+                                   (sliderValue < 11 ?
+                                        qsTr("车程较短") :
+                                        (sliderValue < 15 ?
+                                             qsTr("步行较少") :
+                                             qsTr("步行少")
+                                         )
+                                    )
+                    label: "车程短↔步行少"
+                    /*Rectangle {
+                        anchors.fill: parent
+                        border.color: "white"
+                        color: "transparent"
+                    }*/
+                }
+                IconButton {
+                    id: acceptbutton
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon.source: "image://theme/icon-m-certificates"
+                }
+                IconButton {
+                    id: closebutton
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon.source: "image://theme/icon-m-close"
                 }
             }
 
@@ -344,7 +412,7 @@ Page {
                 height: contentItem.height
                 //clip: true
                 //visible: count < 150
-                boundsBehavior: Flickable.StopAtBounds
+                //boundsBehavior: Flickable.StopAtBounds
 
                 model: stationmodel
                 /*ListModel {
@@ -374,7 +442,7 @@ Page {
 
                 ViewPlaceholder {
                     enabled: listview.count === 0
-                    text: "下拉或者点击<br>选择出发站及目的站"
+                    text: qsTr("下拉或者点击<br>选择出发站及目的站")
                 }
             }
         }

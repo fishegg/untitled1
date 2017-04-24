@@ -55,7 +55,7 @@ ListItem {
 
             Rectangle {
                 id: iconbackground
-                z: (action === StationModel.GetOffTransfer ||
+                z: (action === StationModel.GetOff ||
                     action === StationModel.Transfer ||
                     action === StationModel.ExitTransfer) ?
                        1 :

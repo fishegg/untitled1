@@ -731,10 +731,10 @@ QHash<int, QByteArray> StationModel::roleNames() const
     return roles;
 }
 
-bool StationModel::search(int s, int d, int p)
+bool StationModel::search(const int &s, const int &d, const int &p, const int &multiple)
 {
     RouteSearch routesearch(station_count);
-    if(!routesearch.search(systemmap_ptr,fullstationlist,station_index,station_count,s,d,p))
+    if(!routesearch.search(systemmap_ptr,fullstationlist,station_index,station_count,s,d,p,multiple))
         return false;
     if(!routesearch.getresult(routestationlist_ptr))//,fullstationlist);
         return false;

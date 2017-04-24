@@ -42,6 +42,12 @@ CoverBackground {
     }*/
     property int page: 1
 
+    CoverPlaceholder {
+        visible: coverlistview.count === 0
+        icon.source: "image://theme/icon-m-train"
+        text: "ffffffffffff"
+    }
+
     ListView {
         id: coverlistview
         anchors.centerIn: parent
