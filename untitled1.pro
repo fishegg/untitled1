@@ -52,7 +52,9 @@ DISTFILES += \
     qml/pages/StationsListDialog.qml \
     qml/components/RouteListViewDelegate.qml \
     qml/components/CoverListViewDelegate.qml \
-    translations/untitled1-en.ts
+    translations/untitled1-en.ts \
+    qml/pages/InformationPage.qml \
+    qml/pages/SettingDialog.qml
 
 HEADERS += \
     src/databaseconnector.h \

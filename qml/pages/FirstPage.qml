@@ -68,13 +68,13 @@ Page {
             from_station_name = dialog.selected_from_station_name
             from_station_number = dialog.selected_from_station_number
             from_index = dialog.selected_from_index
-            frombutton.value = from_station_number + " " + from_station_name
+            //frombutton.value = from_station_number + " " + from_station_name
             //tobutton.value = dialog.selected_to_station_number + " " + dialog.selected_to_station_name
             to_number = dialog.selected_to_number
             to_station_name = dialog.selected_to_station_name
             to_station_number = dialog.selected_to_station_number
             to_index = dialog.selected_to_index
-            tobutton.value = to_station_number + " " + to_station_name
+            //tobutton.value = to_station_number + " " + to_station_name
             /*if(from_number !== -1 && to_number !== -1) {
                 stationmodel.search(from_number,to_number,preference)
                 //stationmodel.getroutelistdata()
@@ -89,9 +89,18 @@ Page {
         t = to_number
         to_number = from_number
         from_number = t
-        t = tobutton.value
-        tobutton.value = frombutton.value
-        frombutton.value = t
+        //t = tobutton.value
+        //tobutton.value = frombutton.value
+        //frombutton.value = t
+        t = to_station_number
+        to_station_number = from_station_number
+        from_station_number = t
+        t = to_station_name
+        to_station_name = from_station_name
+        from_station_name = t
+        t = to_index
+        to_index = from_index
+        from_index = to_index
     }
 
     function wait() {
@@ -152,6 +161,14 @@ Page {
             MenuItem {
                 text: qsTr("Show Page 2")
                 onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
+            }
+            MenuItem {
+                text: qsTr("设置")
+                onClicked: pageStack.push(Qt.resolvedUrl("SettingDialog.qml"))
+            }
+            MenuItem {
+                text: qsTr("软件信息")
+                onClicked: pageStack.push(Qt.resolvedUrl("InformationPage.qml"))
             }
             MenuItem {
                 text: from_number !== -1 || to_number !== -1 ?
@@ -218,7 +235,7 @@ Page {
             //bottomPadding: spacing
             PageHeader {
                 id: header
-                title: stationmodel.getname()//qsTr("Show Page 2𧒽") + listview.contentItem.height + "\u274BD"
+                title: stationmodel.getname() + qsTr("Show Page 2𧒽") + listview.contentItem.height + "\u274BD"
             }
 
             Row {
@@ -228,7 +245,9 @@ Page {
                     id: frombutton
                     width: parent.width / 2
                     label: qsTr("出发站")
-                    value: qsTr("点击选择")
+                    value: from_number === -1 ?
+                               qsTr("点击选择") :
+                               from_station_number + " " + from_station_name
                     onClicked: {
                         //from_number = -1
                         //console.log("to_number" + to_number)
@@ -240,7 +259,9 @@ Page {
                     enabled: from_number !== -1
                     width: parent.width / 2
                     label: qsTr("目的站")
-                    //value: "选择"
+                    value: to_number === -1 ?
+                               "" :
+                               to_station_number + " " + to_station_name
                     onClicked: {
                         //to_number = -1
                         //console.log("from_name" + from_station_name)
@@ -457,7 +478,7 @@ Page {
                 id: slider
                 width: parent.width - acceptbutton.width - closebutton.width
                 minimumValue: 1
-                maximumValue: 50
+                maximumValue: 20
                 stepSize: 1
                 value: multiple
                 /*valueText: sliderValue < 6 ?

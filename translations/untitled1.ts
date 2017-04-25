@@ -70,6 +70,18 @@
         <source>个性化</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>软件信息</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Page 2𧒽</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RouteListViewDelegate</name>
