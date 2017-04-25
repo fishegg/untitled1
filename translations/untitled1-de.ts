@@ -27,10 +27,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Page 2𧒽</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>重选出发站及目的站</source>
         <translation type="unfinished"></translation>
     </message>
@@ -67,19 +63,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>平衡</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>下拉或者点击&lt;br&gt;选择出发站及目的站</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>车程较短</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>步行较少</source>
+        <source>个性化</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

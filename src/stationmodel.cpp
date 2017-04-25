@@ -750,3 +750,14 @@ int StationModel::routelistrowcount() const
 {
     return routestationlist.count();
 }
+
+QString StationModel::getname() const
+{
+    QSqlQuery query;
+    query.exec("SELECT name FROM information");
+    query.first();
+    QString name;
+    name = query.value(0).toString();
+    query.finish();
+    return name;
+}

@@ -16,28 +16,11 @@ Item {
         width: parent.width
         spacing: 0
 
-        Row {
-            visible: count !== 0
-            height: stationcountlabel.height
-            width: parent.width
-            spacing: Theme.paddingSmall
-
-            /*Rectangle {
-                id: viastationline
-                height: parent.height// / 3
-                width: Theme.paddingSmall
-                anchors.verticalCenter: parent.verticalCenter
-                color: previous_colour
-            }*/
-
-            Label {
-                id: stationcountlabel
-                //anchors.horizontalCenter: parent.horizontalCenter
-                //width: parent.width
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeTiny
-                text: qsTr("%1 个站").arg(count)
-            }
+        Loader {
+            id: loader
+            sourceComponent: count !== 0 ?
+                                 stationcountlabelcomponent :
+                                 undefined
         }
 
         Row {
@@ -113,6 +96,33 @@ Item {
                             qsTr("下车，到达")
                     }*/
                 }
+            }
+        }
+    }
+
+    Component {
+        id: stationcountlabelcomponent
+        Row {
+            //visible: count !== 0
+            //height: stationcountlabel.height
+            //width: parent.width
+            spacing: Theme.paddingSmall
+
+            /*Rectangle {
+                id: viastationline
+                height: parent.height// / 3
+                width: Theme.paddingSmall
+                anchors.verticalCenter: parent.verticalCenter
+                color: previous_colour
+            }*/
+
+            Label {
+                id: stationcountlabel
+                //anchors.horizontalCenter: parent.horizontalCenter
+                //width: parent.width
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeTiny
+                text: qsTr("%1 个站").arg(count)
             }
         }
     }

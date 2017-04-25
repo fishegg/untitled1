@@ -49,6 +49,7 @@ Page {
     property int from_index
     property int to_index
     property int preference: 1
+    property int multiple: 10
 
     function openlistdialog(f, t, fnu, tnu, fna, tna, fi, ti) {
         var dialog = pageStack.push(Qt.resolvedUrl("StationsListDialog.qml"),
@@ -104,12 +105,12 @@ Page {
         type2button.highlighted = false
         type3button.highlighted = false*/
         preference = type
-        search()
+        //search()
     }
 
     function search() {
         if(from_number !== -1 && to_number !== -1) {
-            stationmodel.search(from_number,to_number,preference)
+            stationmodel.search(from_number,to_number,preference,multiple)
             wait()
         }
     }
@@ -217,7 +218,7 @@ Page {
             //bottomPadding: spacing
             PageHeader {
                 id: header
-                title: qsTr("Show Page 2𧒽") + listview.contentItem.height + "\u274BD"
+                title: stationmodel.getname()//qsTr("Show Page 2𧒽") + listview.contentItem.height + "\u274BD"
             }
 
             Row {
@@ -260,149 +261,18 @@ Page {
                 }
             }*/
 
-            Row {
+            /*Row {
                 //anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width// - Theme.horizontalPageMargins
                 //spacing: Theme.paddingSmall
                 //height: Theme.itemSizeExtraSmall
-                BackgroundItem {
-                    id: type0button
-                    width: parent.width / 4
-                    //highlighted: preference === 0
-                    Rectangle {
-                        id: selectedindicator0
-                        visible: preference === StationModel.ConvenientlyTransfer
-                        anchors.fill: parent
-                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
-                        //color: Theme.secondaryHighlightColor
-                    }
-                    Label {
-                        anchors.centerIn: parent
-                        color: type0button.highlighted || selectedindicator0.visible ?
-                                   Theme.highlightColor :
-                                   Theme.primaryColor
-                        text: qsTr("步行少")
-                    }
-                    onReleased: {
-                        /*preference = 0
-                        highlighted = preference === 0
-                        type1button.highlighted = false
-                        type2button.highlighted = false
-                        type3button.highlighted = false
-                        if(from_number !== -1 && to_number !== -1) {
-                            stationmodel.search(from_number,to_number,preference)
-                            //stationmodel.getroutelistdata()
-                            touchblocker.enabled = true
-                            timer.start()
-                        }*/
-                        setpreference(StationModel.ConvenientlyTransfer)
-                    }
-                    /*onPressed: {
-                        highlighted = !highlighted
-                    }*/
-                }
-                BackgroundItem {
-                    id: type1button
-                    width: parent.width / 4
-                    //highlighted: preference === 1
-                    Rectangle {
-                        id: selectedindicator1
-                        visible: preference === StationModel.LessTimeTransfer
-                        anchors.fill: parent
-                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
-                        //color: Theme.secondaryHighlightColor
-                    }
-                    Label {
-                        anchors.centerIn: parent
-                        color: type1button.highlighted || selectedindicator1.visible ?
-                                   Theme.highlightColor :
-                                   Theme.primaryColor
-                        text: qsTr("换乘少")
-                    }
-                    onReleased: {
-                        setpreference(StationModel.LessTimeTransfer)
-                    }
-                }
-                BackgroundItem {
-                    id: type2button
-                    width: parent.width / 4
-                    //highlighted: preference === 2
-                    Rectangle {
-                        id: selectedindicator2
-                        visible: preference === StationModel.ShortDistance
-                        anchors.fill: parent
-                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
-                        //color: Theme.secondaryHighlightColor
-                    }
-                    Label {
-                        anchors.centerIn: parent
-                        color: type2button.highlighted || selectedindicator2.visible ?
-                                   Theme.highlightColor :
-                                   Theme.primaryColor
-                        text: qsTr("车程短")
-                    }
-                    onReleased: {
-                        setpreference(StationModel.ShortDistance)
-                    }
-                }
-                BackgroundItem {
-                    id: type3button
-                    width: parent.width / 4
-                    //highlighted: preference === 3
-                    Rectangle {
-                        id: selectedindicator3
-                        visible: preference === StationModel.Balance
-                        anchors.fill: parent
-                        color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
-                        //color: Theme.secondaryHighlightColor
-                    }
-                    Label {
-                        anchors.centerIn: parent
-                        color: type3button.highlighted || selectedindicator3.visible ?
-                                   Theme.highlightColor :
-                                   Theme.primaryColor
-                        text: qsTr("平衡")
-                    }
-                    onReleased: {
-                        setpreference(StationModel.Balance)
-                    }
-                }
-            }
 
-            Row {
+            }*/
+
+            Loader {
+                id: loader
                 width: parent.width
-                Slider {
-                    width: parent.width - acceptbutton.width - closebutton.width
-                    minimumValue: 1
-                    maximumValue: 20
-                    stepSize: 1
-                    value: 10
-                    valueText: sliderValue < 6 ?
-                                   qsTr("车程短") :
-                                   (sliderValue < 11 ?
-                                        qsTr("车程较短") :
-                                        (sliderValue < 15 ?
-                                             qsTr("步行较少") :
-                                             qsTr("步行少")
-                                         )
-                                    )
-                    label: "车程短↔步行少"
-                    /*Rectangle {
-                        anchors.fill: parent
-                        border.color: "white"
-                        color: "transparent"
-                    }*/
-                }
-                IconButton {
-                    id: acceptbutton
-                    anchors.verticalCenter: parent.verticalCenter
-                    icon.source: "image://theme/icon-m-certificates"
-                }
-                IconButton {
-                    id: closebutton
-                    anchors.verticalCenter: parent.verticalCenter
-                    icon.source: "image://theme/icon-m-close"
-                }
+                sourceComponent: typebuttoncomponent
             }
 
             SilicaListView {
@@ -442,7 +312,7 @@ Page {
 
                 ViewPlaceholder {
                     enabled: listview.count === 0
-                    text: qsTr("下拉或者点击<br>选择出发站及目的站")
+                    hintText: qsTr("下拉或者点击<br>选择出发站及目的站")
                 }
             }
         }
@@ -465,6 +335,169 @@ Page {
             anchors.centerIn: parent
             running: touchblocker.enabled
             size: BusyIndicatorSize.Large
+        }
+    }
+
+    Component {
+        id: typebuttoncomponent
+        Row {
+            BackgroundItem {
+                id: type0button
+                width: parent.width / 4
+                //highlighted: preference === 0
+                Rectangle {
+                    id: selectedindicator0
+                    visible: preference === StationModel.ConvenientlyTransfer
+                    anchors.fill: parent
+                    color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                    //color: Theme.secondaryHighlightColor
+                }
+                Label {
+                    anchors.centerIn: parent
+                    color: type0button.highlighted || selectedindicator0.visible ?
+                               Theme.highlightColor :
+                               Theme.primaryColor
+                    text: qsTr("步行少")
+                }
+                onReleased: {
+                    /*preference = 0
+                    highlighted = preference === 0
+                    type1button.highlighted = false
+                    type2button.highlighted = false
+                    type3button.highlighted = false
+                    if(from_number !== -1 && to_number !== -1) {
+                        stationmodel.search(from_number,to_number,preference)
+                        //stationmodel.getroutelistdata()
+                        touchblocker.enabled = true
+                        timer.start()
+                    }*/
+                    setpreference(StationModel.ConvenientlyTransfer)
+                    search()
+                }
+                /*onPressed: {
+                    highlighted = !highlighted
+                }*/
+            }
+            BackgroundItem {
+                id: type1button
+                width: parent.width / 4
+                //highlighted: preference === 1
+                Rectangle {
+                    id: selectedindicator1
+                    visible: preference === StationModel.LessTimeTransfer
+                    anchors.fill: parent
+                    color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                    //color: Theme.secondaryHighlightColor
+                }
+                Label {
+                    anchors.centerIn: parent
+                    color: type1button.highlighted || selectedindicator1.visible ?
+                               Theme.highlightColor :
+                               Theme.primaryColor
+                    text: qsTr("换乘少")
+                }
+                onReleased: {
+                    setpreference(StationModel.LessTimeTransfer)
+                    search()
+                }
+            }
+            BackgroundItem {
+                id: type2button
+                width: parent.width / 4
+                //highlighted: preference === 2
+                Rectangle {
+                    id: selectedindicator2
+                    visible: preference === StationModel.ShortDistance
+                    anchors.fill: parent
+                    color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                    //color: Theme.secondaryHighlightColor
+                }
+                Label {
+                    anchors.centerIn: parent
+                    color: type2button.highlighted || selectedindicator2.visible ?
+                               Theme.highlightColor :
+                               Theme.primaryColor
+                    text: qsTr("车程短")
+                }
+                onReleased: {
+                    setpreference(StationModel.ShortDistance)
+                    search()
+                }
+            }
+            BackgroundItem {
+                id: type3button
+                width: parent.width / 4
+                //highlighted: preference === 3
+                Rectangle {
+                    id: selectedindicator3
+                    visible: preference === StationModel.Balance
+                    anchors.fill: parent
+                    color: Theme.rgba(Theme.secondaryHighlightColor, Theme.highlightBackgroundOpacity)
+                    //color: Theme.secondaryHighlightColor
+                }
+                Label {
+                    anchors.centerIn: parent
+                    color: type3button.highlighted || selectedindicator3.visible ?
+                               Theme.highlightColor :
+                               Theme.primaryColor
+                    text: qsTr("个性化")
+                }
+                onReleased: {
+                    setpreference(StationModel.Balance)
+                    loader.sourceComponent = slidercomponent
+                }
+            }
+        }
+    }
+
+    Component {
+        id: slidercomponent
+        Row {
+            Slider {
+                id: slider
+                width: parent.width - acceptbutton.width - closebutton.width
+                minimumValue: 1
+                maximumValue: 50
+                stepSize: 1
+                value: multiple
+                /*valueText: sliderValue < 6 ?
+                               qsTr("车程较短") :
+                               (sliderValue < 11 ?
+                                    qsTr("车程较短") :
+                                    (sliderValue < 15 ?
+                                         qsTr("步行较少") :
+                                         qsTr("步行较少")
+                                     )
+                                )*/
+                label: "车程较短↔步行较少"// + sliderValue + " " + multiple
+                /*Rectangle {
+                    anchors.fill: parent
+                    border.color: "white"
+                    color: "transparent"
+                }*/
+                Component.onCompleted: {
+                    //value = multiple
+                }
+                //onSliderValueChanged: multiple = sliderValue
+                onDownChanged: multiple = sliderValue
+            }
+            IconButton {
+                id: acceptbutton
+                anchors.verticalCenter: parent.verticalCenter
+                icon.source: "image://theme/icon-m-certificates"
+                onClicked: {
+                    //multiple = slider.sliderValue
+                    search()
+                }
+            }
+            IconButton {
+                id: closebutton
+                anchors.verticalCenter: parent.verticalCenter
+                icon.source: "image://theme/icon-m-close"
+                onClicked: {
+                    loader.sourceComponent = typebuttoncomponent
+                }
+            }
         }
     }
 }

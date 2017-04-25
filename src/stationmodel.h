@@ -72,6 +72,7 @@ public:
     Q_INVOKABLE bool search(const int &s, const int &d, const int &p, const int &multiple = 10);
     Q_INVOKABLE int routedata(const int &index) const;
     Q_INVOKABLE int routelistrowcount() const;
+    Q_INVOKABLE QString getname() const;
 protected:
     QHash<int, QByteArray> roleNames() const;
 private:

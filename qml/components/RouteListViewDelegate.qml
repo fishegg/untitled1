@@ -113,47 +113,57 @@ ListItem {
                            Theme.primaryColor
                 text: station_number + " " + station_name
             }
-            Label {
-                id: actionlabel
+            Loader {
+                id: loader
                 width: parent.width
-                wrapMode: Text.Wrap
-                visible: action != StationModel.OnTrain
-                color: !root.highlighted ?
-                           Theme.secondaryColor :
-                           Theme.secondaryHighlightColor
-                font.pixelSize: Theme.fontSizeSmall
-                text: action === StationModel.Depart ?
-                          qsTr("在 %1入闸处 入闸<br>乘坐 %2 %3方向 列车").arg(line_name).arg(line_name).arg(towards) :
-                          (action === StationModel.GetOff ?
-                               qsTr("下车") :
-                               (action === StationModel.Transfer ?
-                                    qsTr("换乘 %1 %2方向 列车").arg(line_name).arg(towards) :
-                                    (action === StationModel.Exit ?
-                                         qsTr("下车，出闸") :
-                                         (action === StationModel.ExitTransfer ?
-                                              qsTr("在 %1入闸处 入闸<br>换乘 %2 %3方向 列车").arg(line_name).arg(line_name).arg(towards) :
-                                              (action === StationModel.Arrive ?
-                                                   qsTr("下车，到达") :
-                                                   "")
-                                          )
-                                     )
-                                )
-                           )/*{
-                    if(action == StationModel.Depart)
-                        qsTr("乘坐 %1 往%2方向 列车").arg(line).arg(toward)
-                    else if(action == StationModel.GetoffTransfer)
-                        qsTr("下车")
-                    else if(action == StationModel.Transfer)
-                        qsTr("换乘 %1 往%2方向 列车").arg(line).arg(toward)
-                    else if(action == StationModel.Exit)
-                        qsTr("下车，出闸")
-                    else if(action == StationModel.ExitTransfer)
-                        //action + " " + line_name + " 往" + direction + "方向 列车"
-                        qsTr("%1入闸，换乘 %2 往%3方向 列车").arg(line).arg(line).arg(toward)
-                    else if(action == StationModel.Arrive)
-                        qsTr("下车，到达")
-                }*/
+                sourceComponent: action !== StationModel.OnTrain ?
+                                     actionlabelcomponent :
+                                     undefined
             }
+        }
+    }
+
+    Component {
+        id: actionlabelcomponent
+        Label {
+            id: actionlabel
+            wrapMode: Text.Wrap
+            //visible: action != StationModel.OnTrain
+            color: !root.highlighted ?
+                       Theme.secondaryColor :
+                       Theme.secondaryHighlightColor
+            font.pixelSize: Theme.fontSizeSmall
+            text: action === StationModel.Depart ?
+                      qsTr("在 %1入闸处 入闸<br>乘坐 %2 %3方向 列车").arg(line_name).arg(line_name).arg(towards) :
+                      (action === StationModel.GetOff ?
+                           qsTr("下车") :
+                           (action === StationModel.Transfer ?
+                                qsTr("换乘 %1 %2方向 列车").arg(line_name).arg(towards) :
+                                (action === StationModel.Exit ?
+                                     qsTr("下车，出闸") :
+                                     (action === StationModel.ExitTransfer ?
+                                          qsTr("在 %1入闸处 入闸<br>换乘 %2 %3方向 列车").arg(line_name).arg(line_name).arg(towards) :
+                                          (action === StationModel.Arrive ?
+                                               qsTr("下车，到达") :
+                                               "")
+                                      )
+                                 )
+                            )
+                       )/*{
+                if(action == StationModel.Depart)
+                    qsTr("乘坐 %1 往%2方向 列车").arg(line).arg(toward)
+                else if(action == StationModel.GetoffTransfer)
+                    qsTr("下车")
+                else if(action == StationModel.Transfer)
+                    qsTr("换乘 %1 往%2方向 列车").arg(line).arg(toward)
+                else if(action == StationModel.Exit)
+                    qsTr("下车，出闸")
+                else if(action == StationModel.ExitTransfer)
+                    //action + " " + line_name + " 往" + direction + "方向 列车"
+                    qsTr("%1入闸，换乘 %2 往%3方向 列车").arg(line).arg(line).arg(toward)
+                else if(action == StationModel.Arrive)
+                    qsTr("下车，到达")
+            }*/
         }
     }
 
