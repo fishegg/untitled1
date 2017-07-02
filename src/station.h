@@ -28,6 +28,8 @@ public:
     int action() const;
     QString towards() const;
     QString linecolour() const;
+    QString stationnumberleft() const;
+    QString stationnumberright() const;
 };
 
 #endif // STATION_H

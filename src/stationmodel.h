@@ -33,7 +33,9 @@ public:
         LineColourRole,
         InterchangeRole,
         ActionRole,
-        TowardsRole
+        TowardsRole,
+        StnNumLeftRole,
+        StnNumRightRole
     };
     enum LoadStatus {
         Null,

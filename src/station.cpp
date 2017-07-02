@@ -107,3 +107,12 @@ QString Station::linecolour() const
 {
     return line_colour;
 }
+
+QString Station::stationnumberleft() const
+{
+    return stn_num.left(stn_num.size() - 2);
+}
+QString Station::stationnumberright() const
+{
+    return stn_num.right(2);
+}

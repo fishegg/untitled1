@@ -464,7 +464,7 @@ Page {
                     text: qsTr("个性化")
                 }
                 onReleased: {
-                    setpreference(StationModel.Balance)
+                    //setpreference(StationModel.Balance)
                     loader.sourceComponent = slidercomponent
                 }
             }
@@ -508,6 +508,7 @@ Page {
                 icon.source: "image://theme/icon-m-certificates"
                 onClicked: {
                     //multiple = slider.sliderValue
+                    setpreference(StationModel.Balance)
                     search()
                 }
             }

@@ -622,6 +622,14 @@ QVariant StationModel::data(const QModelIndex &index, int role) const
     {
         return station.towards();
     }
+    else if(role == StnNumLeftRole)
+    {
+        return station.stationnumberleft();
+    }
+    else if(role == StnNumRightRole)
+    {
+        return station.stationnumberright();
+    }
 
     return QVariant();
 }
